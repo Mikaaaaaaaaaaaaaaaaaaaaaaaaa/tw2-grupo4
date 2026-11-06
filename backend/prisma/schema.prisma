@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+}
+
+model order_items {
+  id         Int      @id(map: "PK__order_it__3213E83F95B2D5F0") @default(autoincrement())
+  order_id   Int
+  product_id Int
+  quantity   Int
+  unit_price Decimal  @db.Decimal(10, 2)
+  orders     orders   @relation(fields: [order_id], references: [id], onUpdate: NoAction, map: "FK__order_ite__order__66603565")
+  products   products @relation(fields: [product_id], references: [id], onUpdate: NoAction, map: "FK__order_ite__produ__6754599E")
+}
+
+model orders {
+  id          Int           @id(map: "PK__orders__3213E83FBB17232A") @default(autoincrement())
+  user_id     Int
+  total       Decimal       @db.Decimal(12, 2)
+  fecha       DateTime      @default(dbgenerated("sysdatetime()"), map: "DF__orders__fecha__6383C8BA")
+  order_items order_items[]
+  users       users         @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "FK__orders__user_id__628FA481")
+}
+
+model products {
+  id          Int           @id(map: "PK__products__3213E83F586B7415") @default(autoincrement())
+  title       String        @db.NVarChar(150)
+  description String?
+  category    String        @db.NVarChar(100)
+  price       Decimal       @db.Decimal(10, 2)
+  image       String?       @db.NVarChar(500)
+  stock       Int           @default(0, map: "DF__products__stock__5FB337D6")
+  rating      Decimal?      @db.Decimal(2, 1)
+  order_items order_items[]
+}
+
+model users {
+  id            Int      @id(map: "PK__users__3213E83F3046ACAF") @default(autoincrement())
+  email         String   @unique(map: "UQ__users__AB6E616441E02F30") @db.NVarChar(255)
+  password_hash String   @db.NVarChar(255)
+  nombre        String   @db.NVarChar(100)
+  apellido      String   @db.NVarChar(100)
+  direccion     String   @db.NVarChar(255)
+  orders        orders[]
+}
