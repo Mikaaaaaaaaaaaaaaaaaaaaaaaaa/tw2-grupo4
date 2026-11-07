@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CarritoService } from '../services/carrito';
 
 @Component({
   imports: [CommonModule],
@@ -8,7 +9,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './carrito.html',
 })
 export class Carrito {
-    carritoAbierto: boolean = false;
+  readonly carritoService = inject(CarritoService);
+  carritoAbierto = false;
 
   abrirCarrito(): void {
     this.carritoAbierto = true;
@@ -16,5 +18,17 @@ export class Carrito {
 
   cerrarCarrito(): void {
     this.carritoAbierto = false;
+  }
+
+  incrementar(productoId: number): void {
+    this.carritoService.incrementar(productoId);
+  }
+
+  disminuir(productoId: number): void {
+    this.carritoService.disminuir(productoId);
+  }
+
+  eliminar(productoId: number): void {
+    this.carritoService.eliminar(productoId);
   }
 }

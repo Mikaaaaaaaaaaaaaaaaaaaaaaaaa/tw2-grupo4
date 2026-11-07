@@ -329,3 +329,151 @@
     transition: none;
   }
 }
+
+/* Numerito de cantidad en el carrito */
+.cart-count,
+.header-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.header-count {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+}
+
+.cart-content {
+  display: block;
+  padding: 18px 20px;
+}
+
+.cart-content--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.empty-cart span {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cart-product {
+  display: flex;
+  gap: 13px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.cart-product-image {
+  width: 82px;
+  height: 82px;
+  flex: 0 0 82px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+
+.cart-product-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.cart-product-heading,
+.cart-product-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cart-product-heading h3 {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.remove-button {
+  flex: 0 0 auto;
+  padding: 5px;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.remove-button:hover {
+  color: #dc2626;
+}
+
+.cart-product-price {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.cart-product-bottom {
+  margin-top: 10px;
+}
+
+.quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 2px 6px;
+}
+
+.quantity-control button {
+  width: 22px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.quantity-control span {
+  min-width: 12px;
+  text-align: center;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cart-line-total {
+  color: var(--color-primary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.checkout-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
