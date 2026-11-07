@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { Login } from '../login/login';
 import { Carrito } from '../../carrito/carrito';
 import { Nav } from '../../nav/nav';
+import { CarritoService } from '../../services/carrito';
 
 @Component({
   imports: [FormsModule, CommonModule, RouterModule, Login, Carrito, Nav],
@@ -27,7 +28,10 @@ export class Catalogo {
 
   public mensajeToast: string | null = null;
 
-  public constructor(private productoService: ProductoService) {}
+  public constructor(
+    private productoService: ProductoService,
+    private carritoService: CarritoService,
+  ) {}
 
   public ngOnInit(): void {
     this.productos = this.productoService.obtenerTodosProductos();
@@ -107,6 +111,7 @@ export class Catalogo {
   }
 
   public agregarAlCarritoDeCompras(producto: Product): void {
-    this.mostrarToast(`Se ha agregado "${producto.nombre}" al carrito de compras.`);
+    this.carritoService.agregar(producto);
+    this.mostrarToast(`Se ha agregado \"${producto.nombre}\" al carrito de compras.`);
   }
 }
