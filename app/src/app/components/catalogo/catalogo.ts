@@ -8,7 +8,7 @@ import { Login } from '../login/login';
 import { Carrito } from '../../carrito/carrito';
 import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
-
+import { LoginService } from '../../services/login';
 @Component({
   imports: [FormsModule, CommonModule, RouterModule, Login, Carrito, Nav],
   selector: 'app-catalogo',
@@ -19,8 +19,9 @@ export class Catalogo {
   public productos: Product[] = [];
   public productosFiltrados: Product[] = [];
   public mostrarLogin: boolean = false;
-  public usuarioActual: string | null = null;
-
+  public get usuarioActual(): string | null {
+    return this.loginService.usuario()?.nombre ?? null;
+  }
   public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio'];
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
@@ -31,6 +32,7 @@ export class Catalogo {
   public constructor(
     private productoService: ProductoService,
     private carritoService: CarritoService,
+    private loginService: LoginService,
   ) {}
 
   public ngOnInit(): void {
@@ -46,24 +48,15 @@ export class Catalogo {
     this.mostrarLogin = false;
   }
 
-  public Ingresar(datos: { email: string; password: string; recordar: boolean }): void {
-    this.usuarioActual = datos.email.split('@')[0];
+  public alAutenticar(nombre: string): void {
     this.mostrarLogin = false;
-    this.mostrarToast(`¡Bienvenido de nuevo, ${this.usuarioActual}!`);
+    this.mostrarToast(`¡Hola, ${nombre}!`);
   }
-
-  public Registrar(datos: { nombre: string; email: string; password: string }): void {
-    this.usuarioActual = datos.nombre;
-    this.mostrarLogin = false;
-    this.mostrarToast(`¡Cuenta creada con éxito! Hola, ${datos.nombre}.`);
-  }
-
   public cerrarSesion(): void {
-    this.usuarioActual = null;
+    this.loginService.logout();
     this.mostrarLogin = false;
     this.mostrarToast('Sesión cerrada correctamente.');
   }
-
   public aplicarFiltrosBusquedas(): void {
     let resultado = [...this.productos];
 
