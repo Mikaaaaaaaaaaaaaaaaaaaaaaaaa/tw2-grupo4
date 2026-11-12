@@ -1,9 +1,13 @@
 import "dotenv/config";
 import express from "express";
 import { prisma } from "./config/db";
+import authRouter from "./routes/login.routes";
+import cors from "cors";
 
 const app = express();
+app.use(cors());          // antes de las rutas
 app.use(express.json());
+app.use("/api/auth", authRouter);
 
 app.get("/api/health", async (_req, res) => {
   try {
@@ -20,3 +24,6 @@ const PORT = Number(process.env.PORT ?? 3000);
 app.listen(PORT, () => {
   console.log(`Servidor listo en http://localhost:${PORT}`);
 });
+
+app.use(cors());
+
