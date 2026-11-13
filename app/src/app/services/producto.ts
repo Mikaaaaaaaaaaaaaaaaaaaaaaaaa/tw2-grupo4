@@ -37,7 +37,13 @@ export class ProductoService {
   }
 
   public crear(producto: Producto): Observable<Producto> {
-    // El alta usa el contrato del TP. Si la API usa category/image, el mapeo debe quedar aquí.
-    return this.http.post<Producto>(this.apiUrl, producto);
+    return this.http.post<Producto>(this.apiUrl, {
+      title: producto.nombre,
+      description: producto.descripcion,
+      category: producto.clasificacion,
+      price: producto.precio,
+      stock: 0,
+      ...(producto.imagen ? { image: producto.imagen } : {}),
+    });
   }
 }
