@@ -38,6 +38,7 @@
         <a href="#" class="text-indigo-600 hover:underline font-medium">¿Olvidaste tu clave?</a>
       </div>
 
+      <p *ngIf="error" class="text-xs text-red-600">{{ error }}</p>
       <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-md shadow-indigo-500/20">
         Ingresar a la Plataforma
       </button>
@@ -46,11 +47,25 @@
     <!-- registro -->
     <form *ngIf="pestana === 'register'" [formGroup]="formularioRegistro" (ngSubmit)="enviarRegistro()" class="space-y-4" novalidate>
       <div>
-        <label for="reg_nombre" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nombre Completo</label>
+        <label for="reg_nombre" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Nombre</label>
         <input id="reg_nombre" type="text" formControlName="nombre" placeholder="Juan Pérez"
           class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500">
         <p *ngIf="tieneError(formularioRegistro, 'nombre')" class="text-xs text-red-600 mt-1">Ingresá tu nombre.</p>
       </div>
+
+      <div>
+  <label for="reg_apellido" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Apellido</label>
+  <input id="reg_apellido" type="text" formControlName="apellido" placeholder="Pérez"
+    class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+  <p *ngIf="tieneError(formularioRegistro, 'apellido')" class="text-xs text-red-600 mt-1">Ingresá tu apellido.</p>
+</div>
+
+<div>
+  <label for="reg_direccion" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Dirección</label>
+  <input id="reg_direccion" type="text" formControlName="direccion" placeholder="Av. Siempreviva 742"
+    class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+  <p *ngIf="tieneError(formularioRegistro, 'direccion')" class="text-xs text-red-600 mt-1">Ingresá tu dirección.</p>
+</div>
 
       <div>
         <label for="reg_email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico</label>
@@ -65,6 +80,8 @@
           class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500">
         <p *ngIf="tieneError(formularioRegistro, 'password')" class="text-xs text-red-600 mt-1">La contraseña debe tener al menos 6 caracteres.</p>
       </div>
+
+      <p *ngIf="error" class="text-xs text-red-600">{{ error }}</p>
 
       <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-md shadow-emerald-500/20">
         Crear Cuenta

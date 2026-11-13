@@ -4,8 +4,7 @@
 <div class="flex items-center justify-start gap-3 text-xs bg-slate-900 text-slate-300 px-4 py-2 rounded-xl">
   <span>{{ usuarioActual ?? 'Invitado' }}</span>
   <button *ngIf="!usuarioActual" (click)="abrirLogin()" class="text-indigo-400 hover:text-indigo-200 font-semibold">Iniciar Sesión</button>
-  <button *ngIf="usuarioActual" (click)="cerrarLogin()" class="text-indigo-400 hover:text-indigo-200 font-semibold">Cerrar Sesión</button>
-</div>
+<button *ngIf="usuarioActual" (click)="cerrarSesion()" class="text-indigo-400 hover:text-indigo-200 font-semibold">Cerrar Sesión</button></div>
 
   <app-nav></app-nav>
 
@@ -125,6 +124,5 @@
   <span>{{ mensajeToast }}</span>
 </div>
 
-<app-login *ngIf="mostrarLogin" (cerrar)="cerrarLogin()" (ingresar)="Ingresar($event)" (registrar)="Registrar($event)"></app-login>
-
+<app-login *ngIf="mostrarLogin" (cerrar)="cerrarLogin()" (autenticado)="alAutenticar($event)"></app-login>
 <router-outlet />
