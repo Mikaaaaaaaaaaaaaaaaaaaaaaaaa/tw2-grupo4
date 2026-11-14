@@ -23,7 +23,7 @@ export class Catalogo implements OnInit {
   public get usuarioActual(): string | null {
     return this.loginService.usuario()?.nombre ?? null;
   }
-  public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio'];
+  public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio', 'Componentes'];
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
   public orden: string = 'Destacados';
