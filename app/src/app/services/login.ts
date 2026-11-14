@@ -3,7 +3,12 @@ import { Injectable, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface Usuario { id: number; nombre: string; email: string; }
+export interface Usuario {
+  id: number;
+  nombre: string;
+  email: string;
+  token: string;
+}
 
 const CLAVE = 'techstore.usuario';
 
@@ -21,10 +26,14 @@ export class LoginService {
       .pipe(tap((u) => this.guardar(u)));
   }
 
-  registrar(datos: { nombre: string; apellido: string; direccion: string; email: string; password: string }) {
-    return this.http
-      .post<Usuario>(`${this.url}/register`, datos)
-      .pipe(tap((u) => this.guardar(u)));
+  registrar(datos: {
+    nombre: string;
+    apellido: string;
+    direccion: string;
+    email: string;
+    password: string;
+  }) {
+    return this.http.post<Usuario>(`${this.url}/register`, datos).pipe(tap((u) => this.guardar(u)));
   }
 
   logout(): void {
@@ -44,4 +53,10 @@ export class LoginService {
       return null;
     }
   }
+
+    get token(): string | null {
+    return this.usuarioSignal()?.token ?? null;
+  }
+
+
 }
