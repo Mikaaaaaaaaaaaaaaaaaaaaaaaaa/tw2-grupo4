@@ -53,19 +53,7 @@ export class Carrito {
     }
 
     this.mensajeError = '';
-    this.pedidoService.crearPedido({
-      userId: usuario.id,
-      items: items.map((item) => ({
-        productId: item.producto.id,
-        quantity: item.cantidad,
-        unitPrice: item.producto.precio,
-      })),
-      total: Number(this.carritoService.total().toFixed(2)),
-      date: new Date().toISOString().slice(0, 10),
-    });
-
-    this.carritoService.vaciar();
     this.cerrarCarrito();
-    this.router.navigate(['/mis-pedidos']);
+    this.router.navigate(['/checkout']);
   }
 }

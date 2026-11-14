@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Catalogo } from './components/catalogo/catalogo';
 import { Detalle } from './components/detalle/detalle';
 import { Pedidos } from './components/pedidos/pedidos';
+import { Checkout } from './components/checkout/checkout';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -20,4 +21,5 @@ export const routes: Routes = [
   },
   { path: 'catalogo', component: Catalogo },
   { path: 'mis-pedidos', component: Pedidos, canActivate: [authGuard] },
+  { path: 'checkout', component: Checkout, canActivate: [authGuard] },
 ];
