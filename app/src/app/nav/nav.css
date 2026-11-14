@@ -8,9 +8,11 @@
   --color-border: #E2E8F0;
   --nav-icon-size: 16px;
   --nav-control-gap: 8px;
+  --nav-active-background: #EEF2FF;
+  --nav-font-family: Arial, Helvetica, sans-serif;
 
   display: block;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--nav-font-family);
 }
 
 /* NAVBAR */
@@ -132,7 +134,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--nav-control-gap);
 
   min-height: 42px;
   padding: 0 12px;
@@ -148,6 +150,7 @@
 
   font-size: 14px;
   font-weight: 600;
+  font-family: inherit;
 
   transition: color 0.2s ease,
               background-color 0.2s ease,
@@ -156,7 +159,14 @@
 
 .nav-link:hover {
   color: var(--color-accent);
-  background-color: #EEF2FF;
+  background-color: var(--nav-active-background);
+  border-color: var(--color-border);
+}
+
+.nav-link--active {
+  color: var(--color-accent);
+  background-color: var(--nav-active-background);
+  border-color: var(--color-border);
 }
 
 .nav-link:focus-visible {
@@ -174,6 +184,10 @@
 
 .nav-link:hover .nav-icon,
 .nav-link--active .nav-icon {
+  color: var(--color-accent);
+}
+
+.nav-link:focus-visible .nav-icon {
   color: var(--color-accent);
 }
 
