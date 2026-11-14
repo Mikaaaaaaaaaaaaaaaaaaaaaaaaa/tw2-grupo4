@@ -6,9 +6,13 @@
   --color-text: #0F172A;
   --color-muted: #64748B;
   --color-border: #E2E8F0;
+  --nav-icon-size: 16px;
+  --nav-control-gap: 8px;
+  --nav-active-background: #EEF2FF;
+  --nav-font-family: Arial, Helvetica, sans-serif;
 
   display: block;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--nav-font-family);
 }
 
 /* NAVBAR */
@@ -113,7 +117,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--nav-control-gap);
 
   margin: 0;
   padding: 0;
@@ -130,7 +134,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--nav-control-gap);
 
   min-height: 42px;
   padding: 0 12px;
@@ -146,6 +150,7 @@
 
   font-size: 14px;
   font-weight: 600;
+  font-family: inherit;
 
   transition: color 0.2s ease,
               background-color 0.2s ease,
@@ -154,7 +159,14 @@
 
 .nav-link:hover {
   color: var(--color-accent);
-  background-color: #EEF2FF;
+  background-color: var(--nav-active-background);
+  border-color: var(--color-border);
+}
+
+.nav-link.nav-link--active {
+  color: #4F46E5 !important;
+  background-color: #EEF2FF !important;
+  border-color: #E2E8F0 !important;
 }
 
 .nav-link:focus-visible {
@@ -164,38 +176,20 @@
 
 
 
-.nav-link .fa-receipt {
-  font-size: 16px;
+.nav-icon {
+  width: var(--nav-icon-size);
+  font-size: var(--nav-icon-size);
   color: var(--color-primary);
 }
 
-.nav-link:hover .fa-receipt {
+.nav-link:hover .nav-icon,
+.nav-link.nav-link--active .nav-icon {
   color: var(--color-accent);
 }
 
-
-
-.add-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  width: 25px;
-  height: 25px;
-
-  color: #FFFFFF;
-  background-color: var(--color-accent);
-  border-radius: 50%;
-
-  font-size: 12px;
+.nav-link:focus-visible .nav-icon {
+  color: var(--color-accent);
 }
-
-.nav-link:hover .add-icon {
-  background-color: #3730A3;
-}
-
-
 
 .cart-item {
   display: flex;
@@ -225,7 +219,7 @@
 
   .nav-link {
     padding: 0 8px;
-    gap: 6px;
+    gap: var(--nav-control-gap);
   }
 
   .search-container {

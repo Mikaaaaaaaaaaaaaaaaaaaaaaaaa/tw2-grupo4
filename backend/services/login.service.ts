@@ -1,6 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import type { UsuarioRepository } from "../repository/login.repository";
 import type { Usuario } from "../models/usuario.model";
+import jwt from "jsonwebtoken";
 
 function hashear(password: string): string {
   const salt = randomBytes(16).toString("hex");
@@ -15,6 +16,14 @@ function coincide(password: string, guardado: string): boolean {
   const nuevo = scryptSync(password, salt, 64);
   const hashGuardado = Buffer.from(hash, "hex");
   return nuevo.length === hashGuardado.length && timingSafeEqual(nuevo, hashGuardado);
+}
+
+function crearToken(usuario: { id: number; email: string }): string {
+  return jwt.sign(
+    { id: usuario.id, email: usuario.email },
+    process.env.JWT_SECRET!,
+    { expiresIn: "7d" },
+  );
 }
 
 export class LoginService {
@@ -40,7 +49,7 @@ export class LoginService {
       direccion,
     });
 
-    return { id: usuario.id, nombre: usuario.nombre, email: usuario.email };
+    return { id: usuario.id, nombre: usuario.nombre, email: usuario.email, token: crearToken({ id: usuario.id, email: usuario.email }) };
   }
 
   async login(email: string, password: string) {
@@ -50,6 +59,6 @@ export class LoginService {
       throw new Error("CredencialesInvalidas");
     }
 
-    return { id: usuario.id, nombre: usuario.nombre, email: usuario.email };
+    return { id: usuario.id, nombre: usuario.nombre, email: usuario.email, token: crearToken({ id: usuario.id, email: usuario.email }) };
   }
 }

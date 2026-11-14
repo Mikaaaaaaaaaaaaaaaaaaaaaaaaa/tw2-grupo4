@@ -13,23 +13,37 @@
   <!-- Navegación -->
   <ul class="nav-list">
     <li>
-      <a class="nav-link" href="/catalogo">
+      <a
+        class="nav-link"
+        routerLink="/catalogo"
+        routerLinkActive="nav-link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-store nav-icon" aria-hidden="true"></i>
         Catálogo
       </a>
     </li>
 
     <li>
-      <a class="nav-link" routerLink="/mis-pedidos">
-        <i class="fas fa-receipt" aria-hidden="true"></i>
+      <a
+        class="nav-link"
+        routerLink="/mis-pedidos"
+        routerLinkActive="nav-link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-receipt nav-icon" aria-hidden="true"></i>
         <span>Mis pedidos</span>
       </a>
     </li>
 
     <li>
-      <a class="nav-link" href="/cargar-producto">
-        <span class="add-icon" aria-hidden="true">
-          <i class="fas fa-plus"></i>
-        </span>
+      <a
+        class="nav-link"
+        routerLink="/productos/nuevo"
+        routerLinkActive="nav-link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-plus nav-icon" aria-hidden="true"></i>
         <span>Cargar producto</span>
       </a>
     </li>
