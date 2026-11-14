@@ -163,10 +163,10 @@
   border-color: var(--color-border);
 }
 
-.nav-link--active {
-  color: var(--color-accent);
-  background-color: var(--nav-active-background);
-  border-color: var(--color-border);
+.nav-link.nav-link--active {
+  color: #4F46E5 !important;
+  background-color: #EEF2FF !important;
+  border-color: #E2E8F0 !important;
 }
 
 .nav-link:focus-visible {
@@ -183,7 +183,7 @@
 }
 
 .nav-link:hover .nav-icon,
-.nav-link--active .nav-icon {
+.nav-link.nav-link--active .nav-icon {
   color: var(--color-accent);
 }
 
