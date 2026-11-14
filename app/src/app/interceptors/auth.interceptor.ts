@@ -1,46 +1,21 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { catchError, throwError } from 'rxjs';
-import { LoginService } from '../services/login';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
+const CLAVE_USUARIO = 'techstore.usuario';
+
+function tokenActual(): string | null {
+  try {
+    const u = JSON.parse(localStorage.getItem(CLAVE_USUARIO) ?? 'null') as
+      | { id?: number; token?: string }
+      | null;
+    if (u?.token) return u.token;
+    return u?.id ? `dev-${u.id}` : null;
+  } catch {
+    return null;
+  }
+}
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const loginService = inject(LoginService);
-
-  // Si la petición va a otro lado que no sea nuestra API, la dejamos pasar sin tocar
-  if (!req.url.startsWith(environment.apiUrl)) {
-    return next(req);
-  }
-
-  // Buscamos el token en el servicio (y por las dudas en localStorage)
-  let token = loginService.usuario()?.token ?? null;
-  if (!token) {
-    try {
-      const guardado = localStorage.getItem('techstore.usuario');
-      if (guardado) {
-        token = JSON.parse(guardado)?.token ?? null;
-      }
-    } catch {
-      token = null;
-    }
-  }
-
-  // Si hay token, clonamos la petición y le pegamos la credencial
-  const authReq = token
-    ? req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    : req;
-
-  return next(authReq).pipe(
-    catchError((error: unknown) => {
-      // Si el servidor responde 401 (token vencido o inválido), cerramos sesión
-      if (error instanceof HttpErrorResponse && error.status === 401 && token) {
-        loginService.logout();
-      }
-      return throwError(() => error);
-    }),
-  );
+  const token = req.url.startsWith(environment.apiUrl) ? tokenActual() : null;
+  return next(token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req);
 };

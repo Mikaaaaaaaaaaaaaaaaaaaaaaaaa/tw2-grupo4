@@ -1,8 +1,7 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PedidoService } from '../../services/pedido';
-import { ProductoService } from '../../services/producto';
 import { Nav } from '../../nav/nav';
 
 @Component({
@@ -13,25 +12,11 @@ import { Nav } from '../../nav/nav';
 })
 export class Pedidos implements OnInit {
   private readonly pedidoService = inject(PedidoService);
-  private readonly productoService = inject(ProductoService);
-
   public readonly pedidos = this.pedidoService.pedidos;
+  public readonly cargando = this.pedidoService.cargando;
+  public readonly error = this.pedidoService.error;
 
-  private readonly nombres = computed(
-    () =>
-      new Map(
-        this.productoService.productos().map((p) => [p.id, p.nombre] as const),
-      ),
-  );
-
-  ngOnInit(): void {
-    this.pedidoService.cargarPedidos().subscribe({ error: () => { } });
-    if (this.productoService.productos().length === 0) {
-      this.productoService.cargarProductos().subscribe({ error: () => { } });
-    }
-  }
-
-  public nombreProducto(productId: number): string {
-    return this.nombres().get(productId) ?? `Producto #${productId}`;
+  public ngOnInit(): void {
+    this.pedidoService.cargar();
   }
 }

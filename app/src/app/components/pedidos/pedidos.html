@@ -12,7 +12,11 @@
     </a>
   </header>
 
-  @if (pedidos().length === 0) {
+  @if (cargando()) {
+    <p id="cargando_p" class="text-center text-slate-500 py-10">Cargando tus pedidos...</p>
+  } @else if (error(); as mensaje) {
+    <p id="error_p" class="text-center text-red-600 py-10" role="alert">{{ mensaje }}</p>
+  } @else if (pedidos().length === 0) {
     <div id="sin_pedidos_div" class="mt-6 mx-auto max-w-md flex flex-col items-center space-y-3 p-8 text-center bg-white border border-slate-200 rounded-xl">
       <div class="flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 text-2xl">
         <i class="fa-solid fa-box-open" aria-hidden="true"></i>
@@ -41,7 +45,7 @@
             @for (item of pedido.items; track item.productId) {
               <li class="flex items-center justify-between gap-4 py-3 text-sm">
                 <div>
-                  <span class="text-slate-700">{{ nombreProducto(item.productId) }}</span>
+                  <span class="text-slate-700">{{ item.productName }}</span>
                   <span class="block text-xs text-slate-400">{{ item.quantity }} × ${{ item.unitPrice | number: '1.2-2' }}</span>
                 </div>
                 <span class="font-semibold text-slate-900">${{ item.unitPrice * item.quantity | number: '1.2-2' }}</span>
