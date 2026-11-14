@@ -1,8 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PedidoService } from '../../services/pedido';
-import { ProductoService } from '../../services/producto';
 import { Nav } from '../../nav/nav';
 
 @Component({
@@ -11,18 +10,13 @@ import { Nav } from '../../nav/nav';
   templateUrl: './pedidos.html',
   host: { class: 'block' },
 })
-export class Pedidos {
+export class Pedidos implements OnInit {
   private readonly pedidoService = inject(PedidoService);
-  private readonly productoService = inject(ProductoService);
-
   public readonly pedidos = this.pedidoService.pedidos;
+  public readonly cargando = this.pedidoService.cargando;
+  public readonly error = this.pedidoService.error;
 
-  // Se arma una sola vez en vez de buscar el producto en cada render.
-  private readonly nombres = new Map(
-    this.productoService.obtenerTodosProductos().map((p) => [p.id, p.nombre] as const),
-  );
-
-  public nombreProducto(productId: number): string {
-    return this.nombres.get(productId) ?? `Producto #${productId}`;
+  public ngOnInit(): void {
+    this.pedidoService.cargar();
   }
 }

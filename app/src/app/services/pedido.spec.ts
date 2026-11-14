@@ -1,30 +1,55 @@
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { environment } from '../../environments/environment';
+import { Pedido } from '../models/pedido';
 import { PedidoService } from './pedido';
-import { NuevoPedido } from '../models/pedido';
 
-const base: NuevoPedido = {
-  userId: 1,
-  items: [{ productId: 2, quantity: 1, unitPrice: 119.5 }],
-  total: 119.5,
-  date: '2026-10-03',
+const url = `${environment.apiUrl}/orders`;
+const pedido: Pedido = {
+  id: 1, userId: 1, total: 239, date: '2026-10-03T12:00:00.000Z',
+  items: [{ productId: 2, productName: 'Teclado', quantity: 2, unitPrice: 119.5 }],
 };
 
 describe('PedidoService', () => {
-  beforeEach(() => localStorage.clear());
-  afterEach(() => localStorage.clear());
+  let service: PedidoService;
+  let http: HttpTestingController;
 
-  it('asigna ids incrementales y deja el más nuevo primero', () => {
-    const service = new PedidoService();
-    service.crearPedido(base);
-    service.crearPedido(base);
-
-    expect(service.pedidos().map((p) => p.id)).toEqual([2, 1]);
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    service = TestBed.inject(PedidoService);
+    http = TestBed.inject(HttpTestingController);
   });
 
-  it('recupera los pedidos y el último id desde localStorage', () => {
-    new PedidoService().crearPedido(base);
+  afterEach(() => http.verify());
 
-    const recargado = new PedidoService();
-    expect(recargado.pedidos()).toHaveLength(1);
-    expect(recargado.crearPedido(base).id).toBe(2);
+  it('cargar publica los pedidos del backend', () => {
+    service.cargar();
+    expect(service.cargando()).toBe(true);
+    http.expectOne(url).flush([pedido]);
+    expect(service.pedidos()).toEqual([pedido]);
+    expect(service.cargando()).toBe(false);
+  });
+
+  it('cargar informa el error si falla', () => {
+    service.cargar();
+    http.expectOne(url).flush('error', { status: 500, statusText: 'Server Error' });
+    expect(service.error()).toContain('No pudimos cargar');
+    expect(service.pedidos()).toEqual([]);
+  });
+
+  it('cargar pide iniciar sesion cuando recibe 401', () => {
+    service.cargar();
+    http.expectOne(url).flush('unauthorized', { status: 401, statusText: 'Unauthorized' });
+    expect(service.error()).toBe('Iniciá sesión para ver tus pedidos.');
+  });
+
+  it('crearPedido hace POST solo con los items y suma el pedido al principio', () => {
+    service.crearPedido([{ productId: 2, quantity: 2 }]).subscribe();
+    const req = http.expectOne(url);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ items: [{ productId: 2, quantity: 2 }] });
+    req.flush(pedido);
+    expect(service.pedidos()[0]).toEqual(pedido);
   });
 });
