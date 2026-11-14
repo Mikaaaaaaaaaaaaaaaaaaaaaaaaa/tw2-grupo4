@@ -54,7 +54,7 @@ describe('FormProducto', () => {
       nombre: ' Teclado Mecánico RGB ',
       clasificacion: 'Periféricos',
       precio: 199.99,
-      imagen: ' https://images.unsplash.com/imagen.jpg ',
+      imagen: 'https://images.unsplash.com/imagen.jpg',
       descripcion: ' Teclado mecánico con iluminación RGB. ',
     });
     component.productoGuardado.subscribe((producto) => {

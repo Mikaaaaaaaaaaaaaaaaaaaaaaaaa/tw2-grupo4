@@ -1,6 +1,6 @@
 export interface ItemPedido {
   productId: number;
-  productName: string;
+  productName?: string;
   quantity: number;
   unitPrice: number;
 }
@@ -17,3 +17,5 @@ export interface Pedido {
   total: number;
   date: string; // ISO
 }
+
+export type NuevoPedido = Omit<Pedido, 'id'>;

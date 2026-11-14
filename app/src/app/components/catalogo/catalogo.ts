@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { Product } from '../../models/product';
 import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
@@ -9,13 +9,14 @@ import { Carrito } from '../../carrito/carrito';
 import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
+
 @Component({
   imports: [FormsModule, CommonModule, RouterModule, Login, Carrito, Nav],
   selector: 'app-catalogo',
   styleUrl: './catalogo.css',
   templateUrl: './catalogo.html',
 })
-export class Catalogo {
+export class Catalogo implements OnInit {
   public productos: Product[] = [];
   public productosFiltrados: Product[] = [];
   public mostrarLogin: boolean = false;
@@ -33,11 +34,26 @@ export class Catalogo {
     private productoService: ProductoService,
     private carritoService: CarritoService,
     private loginService: LoginService,
-  ) {}
+  ) {
+    effect(() => {
+      const lista = this.productoService.productos();
+      if (lista.length > 0) {
+        this.productos = lista;
+        this.aplicarFiltrosBusquedas();
+      }
+    });
+  }
 
   public ngOnInit(): void {
-    this.productos = this.productoService.obtenerTodosProductos();
-    this.aplicarFiltrosBusquedas();
+    this.productoService.cargarProductos().subscribe({
+      next: (lista) => {
+        this.productos = lista;
+        this.aplicarFiltrosBusquedas();
+      },
+      error: () => {
+        this.mostrarToast('No se pudieron cargar los productos del servidor.');
+      },
+    });
   }
 
   public abrirLogin(): void {
@@ -52,22 +68,25 @@ export class Catalogo {
     this.mostrarLogin = false;
     this.mostrarToast(`¡Hola, ${nombre}!`);
   }
+
   public cerrarSesion(): void {
     this.loginService.logout();
     this.mostrarLogin = false;
     this.mostrarToast('Sesión cerrada correctamente.');
   }
+
   public aplicarFiltrosBusquedas(): void {
     let resultado = [...this.productos];
 
-    // Filtro por categoria.
+    // Filtro por categoría ignorando tildes y mayúsculas
     if (this.categoriaActiva !== 'Todos') {
+      const catBuscada = this.sinTildes(this.categoriaActiva);
       resultado = resultado.filter(
-        (p) => p.categoria.toLowerCase() === this.categoriaActiva.toLowerCase(),
+        (p) => this.sinTildes(p.categoria) === catBuscada,
       );
     }
 
-    // Filtro por texto de busqueada.
+    // Filtro por texto de búsqueda
     if (this.busqueda.trim() !== '') {
       const textoBuscado = this.busqueda.toLowerCase();
 
@@ -78,7 +97,7 @@ export class Catalogo {
       );
     }
 
-    // Ordenamiento de resultados.
+    // Ordenamiento de resultados
     if (this.orden === 'precio-menor') {
       resultado = resultado.sort((a, b) => a.precio - b.precio);
     } else if (this.orden === 'precio-mayor') {
@@ -104,7 +123,26 @@ export class Catalogo {
   }
 
   public agregarAlCarritoDeCompras(producto: Product): void {
-    this.carritoService.agregar(producto);
-    this.mostrarToast(`Se ha agregado \"${producto.nombre}\" al carrito de compras.`);
+    if (!this.carritoService.agregar(producto)) {
+      this.mostrarToast(`No hay más stock disponible de "${producto.nombre}".`);
+      return;
+    }
+    this.mostrarToast(`Se ha agregado "${producto.nombre}" al carrito de compras.`);
+  }
+
+  public cantidadEnCarrito(productoId: number): number {
+    return this.carritoService.items().find((item) => item.producto.id === productoId)?.cantidad ?? 0;
+  }
+
+  public puedeAgregar(producto: Product): boolean {
+    return producto.stock > this.cantidadEnCarrito(producto.id);
+  }
+
+  private sinTildes(texto: string): string {
+    return texto
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
   }
 }

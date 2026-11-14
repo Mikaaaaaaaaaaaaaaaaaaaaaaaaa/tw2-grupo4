@@ -1,0 +1,186 @@
+<app-nav></app-nav>
+
+<div class="checkout-container" *ngIf="!orderPlaced()">
+  <header class="checkout-header">
+    <h1>Finalizar Compra</h1>
+  </header>
+
+  <div *ngIf="mensajeError()" role="alert" class="card" style="color: #b91c1c; border: 1px solid #fca5a5; background: #fef2f2; margin-bottom: 1rem;">
+    {{ mensajeError() }}
+  </div>
+
+  <div class="checkout-grid">
+    <section class="checkout-details">
+      <!-- Datos del Comprador -->
+      <div class="card buyer-info">
+        <h2>Datos del Comprador</h2>
+        <div class="info-row" *ngIf="loginService.usuario() as u">
+          <p><strong>Nombre:</strong> {{ u.nombre }}</p>
+          <p><strong>Email:</strong> {{ u.email }}</p>
+        </div>
+      </div>
+
+      <!-- Medio de Pago -->
+      <div class="card payment-method">
+        <h2>Medio de Pago</h2>
+        <form [formGroup]="paymentForm" (ngSubmit)="confirmPurchase()">
+          <div class="methods-group">
+            <label class="radio-label">
+              <input type="radio" formControlName="method" value="tarjeta">
+              Tarjeta de Crédito/Débito
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="method" value="transferencia">
+              Transferencia Bancaria
+            </label>
+            <label class="radio-label">
+              <input type="radio" formControlName="method" value="efectivo">
+              Efectivo (Pago Fácil / Rapipago)
+            </label>
+          </div>
+
+          <!-- Campos de Tarjeta -->
+          <div *ngIf="paymentForm.get('method')?.value === 'tarjeta'" class="card-fields">
+            <div class="form-field">
+              <label>Número de Tarjeta</label>
+              <input type="text" formControlName="cardNumber" placeholder="0000 0000 0000 0000" maxlength="16">
+              <small class="error" *ngIf="paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid">
+                Deben ser 16 dígitos.
+              </small>
+            </div>
+            <div class="form-field">
+              <label>Nombre del Titular</label>
+              <input type="text" formControlName="cardHolder" placeholder="Como figura en la tarjeta">
+              <small class="error" *ngIf="paymentForm.get('cardHolder')?.touched && paymentForm.get('cardHolder')?.invalid">
+                Nombre inválido.
+              </small>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label>Vencimiento (MM/AA)</label>
+                <input type="text" formControlName="expiry" placeholder="MM/AA" maxlength="5">
+                <small class="error" *ngIf="paymentForm.get('expiry')?.touched && paymentForm.get('expiry')?.invalid">
+                  Formato MM/AA.
+                </small>
+              </div>
+              <div class="form-field">
+                <label>CVV</label>
+                <input type="text" formControlName="cvv" placeholder="123" maxlength="3">
+                <small class="error" *ngIf="paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.invalid">
+                  3 dígitos.
+                </small>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-confirm" [disabled]="carritoService.items().length === 0 || procesando()">
+            {{ procesando() ? 'Procesando...' : 'Confirmar y Pagar' }} ${{ carritoService.total() | number:'1.2-2' }}
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Resumen del Carrito -->
+    <aside class="checkout-summary">
+      <div class="card">
+        <h2>Resumen</h2>
+        <ul class="summary-items">
+          <li *ngFor="let item of carritoService.items()">
+            <div class="item-info">
+              <span>{{ item.cantidad }}x {{ item.producto.nombre }}</span>
+              <span>${{ item.producto.precio * item.cantidad | number:'1.2-2' }}</span>
+            </div>
+          </li>
+        </ul>
+        <div class="summary-totals">
+          <div class="row">
+            <span>Subtotal</span>
+            <span>${{ carritoService.subtotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="row">
+            <span>IVA (21%)</span>
+            <span>${{ carritoService.impuestos() | number:'1.2-2' }}</span>
+          </div>
+          <div class="row total">
+            <span>Total Final</span>
+            <span>${{ carritoService.total() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Factura / Comprobante -->
+<div class="invoice-container" *ngIf="orderPlaced() && lastOrder">
+  <div class="invoice card">
+    <header class="invoice-header">
+      <div class="brand">
+        <span class="logo">TechStore</span>
+        <span class="invoice-type">FACTURA B</span>
+      </div>
+      <div class="invoice-meta">
+        <p><strong>N° Pedido:</strong> #{{ lastOrder.id }}</p>
+        <p><strong>Fecha:</strong> {{ lastOrder.date | date:'dd/MM/yyyy' }}</p>
+      </div>
+    </header>
+
+    <section class="invoice-parties">
+      <div class="party">
+        <h3>Emisor</h3>
+        <p>TechStore S.A.</p>
+        <p>Av. Principal 123, CABA</p>
+        <p>CUIT: 30-12345678-9</p>
+      </div>
+      <div class="party">
+        <h3>Cliente</h3>
+        <p>{{ lastOrder.client.nombre }}</p>
+        <p>{{ lastOrder.client.email }}</p>
+        <p>Consumidor Final</p>
+      </div>
+    </section>
+
+    <table class="invoice-table">
+      <thead>
+        <tr>
+          <th>Detalle</th>
+          <th>Cant.</th>
+          <th>Precio</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of lastOrder.items">
+          <td>{{ item.nombre }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>${{ item.precio | number:'1.2-2' }}</td>
+          <td>${{ item.subtotal | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">Subtotal</td>
+          <td>${{ lastOrder.subtotal | number:'1.2-2' }}</td>
+        </tr>
+        <tr>
+          <td colspan="3">IVA (21%)</td>
+          <td>${{ lastOrder.impuestos | number:'1.2-2' }}</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="3">TOTAL</td>
+          <td>${{ lastOrder.total | number:'1.2-2' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <footer class="invoice-footer">
+      <p><strong>Medio de Pago:</strong> {{ lastOrder.paymentMethod | uppercase }}</p>
+      <div class="no-print actions">
+        <button class="btn-print" (click)="printInvoice()">
+          <i class="fa-solid fa-print"></i> Imprimir Comprobante
+        </button>
+        <a routerLink="/mis-pedidos" class="btn-orders">Ir a mis pedidos</a>
+      </div>
+    </footer>
+  </div>
+</div>

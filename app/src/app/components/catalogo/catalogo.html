@@ -85,6 +85,10 @@
           </h3>
 
           <p class="text-xs text-slate-500 line-clamp-2 mt-1">{{ prod.descripcion }}</p>
+          <p *ngIf="prod.stock > 0" class="mt-2 text-xs font-semibold text-emerald-600">
+            Stock: {{ prod.stock - cantidadEnCarrito(prod.id) }} disponibles
+          </p>
+          <p *ngIf="prod.stock === 0" class="mt-2 text-xs font-semibold text-red-600">Sin stock</p>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
@@ -93,7 +97,7 @@
                 <span class="text-lg font-extrabold text-slate-900" id="precio_span">${{ prod.precio | number:'1.2-2' }}</span>
             </div>
 
-            <button (click)="agregarAlCarritoDeCompras(prod)" class="bg-indigo-600 hover:bg-indigo-700 text-white p-2.5 rounded-lg shadow-md shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-1.5 text-xs font-bold" id="agregar_al_carrito_button">
+            <button (click)="agregarAlCarritoDeCompras(prod)" [disabled]="!puedeAgregar(prod)" class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white p-2.5 rounded-lg shadow-md shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-1.5 text-xs font-bold" id="agregar_al_carrito_button">
                 <i class="fa-solid fa-cart-plus text-sm"></i>
                 <span class="text-xs font-bold uppercase" id="agregar_al_carrito_span">Agregar</span>
             </button>

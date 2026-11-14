@@ -33,9 +33,13 @@ export class PedidoService {
     });
   }
 
-  public crearPedido(items: NuevoItemPedido[]): Observable<Pedido> {
-    return this.http
-      .post<Pedido>(this.apiUrl, { items })
-      .pipe(tap((pedido) => this.listaPedidos.update((lista) => [pedido, ...lista])));
-  }
+  public crearPedido(entrada: NuevoItemPedido[] | { items: NuevoItemPedido[] }): Observable<Pedido> {
+  const items = Array.isArray(entrada)
+    ? entrada
+    : entrada.items.map(({ productId, quantity }) => ({ productId, quantity }));
+
+  return this.http
+    .post<Pedido>(this.apiUrl, { items })
+    .pipe(tap((pedido) => this.listaPedidos.update((lista) => [pedido, ...lista])));
+}
 }
