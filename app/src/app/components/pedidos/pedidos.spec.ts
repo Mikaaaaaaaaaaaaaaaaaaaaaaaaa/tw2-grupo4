@@ -37,6 +37,7 @@ describe('Pedidos', () => {
 
   it('should create', async () => {
     fixture.detectChanges();
+    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush([]);
     httpMock.expectOne((req) => req.url.endsWith('/products')).flush([]);
     await fixture.whenStable();
     expect(fixture.componentInstance).toBeTruthy();
@@ -44,6 +45,7 @@ describe('Pedidos', () => {
 
   it('muestra el estado vacío cuando no hay pedidos', async () => {
     fixture.detectChanges();
+    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush([]);
     httpMock.expectOne((req) => req.url.endsWith('/products')).flush([]);
     await fixture.whenStable();
     const html = fixture.nativeElement as HTMLElement;
@@ -55,13 +57,14 @@ describe('Pedidos', () => {
   });
 
   it('lista los pedidos cuando ya hay compras', async () => {
-    pedidoService.crearPedido({
+    fixture.detectChanges();
+    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush([{
+      id: 1,
       userId: 12,
       items: [{ productId: 1, quantity: 2, unitPrice: 1399.99 }],
       total: 2799.98,
       date: '2026-10-03',
-    });
-    fixture.detectChanges();
+    }]);
     httpMock.expectOne((req) => req.url.endsWith('/products')).flush([
       {
         id: 1,

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 import { PedidoService } from '../../services/pedido';
+import { ProductoService } from '../../services/producto';
 import { Nav } from '../../nav/nav';
 
 @Component({
@@ -20,9 +21,12 @@ export class Checkout {
   readonly carritoService = inject(CarritoService);
   readonly loginService = inject(LoginService);
   private readonly pedidoService = inject(PedidoService);
+  private readonly productoService = inject(ProductoService);
 
   paymentForm: FormGroup;
   orderPlaced = signal(false);
+  procesando = signal(false);
+  mensajeError = signal<string | null>(null);
   lastOrder: any = null;
 
   constructor() {
@@ -67,6 +71,9 @@ export class Checkout {
 
     if (!usuario || items.length === 0) return;
 
+    this.procesando.set(true);
+    this.mensajeError.set(null);
+
     const nuevoPedido = {
       userId: usuario.id,
       items: items.map(item => ({
@@ -78,26 +85,37 @@ export class Checkout {
       date: new Date().toISOString().slice(0, 10),
     };
 
-    const pedido = this.pedidoService.crearPedido(nuevoPedido);
-    this.lastOrder = {
-      ...pedido,
-      paymentMethod: this.paymentForm.get('method')?.value,
-      client: {
-        nombre: usuario.nombre,
-        email: usuario.email,
-      },
-      items: items.map(item => ({
-        nombre: item.producto.nombre,
-        cantidad: item.cantidad,
-        precio: item.producto.precio,
-        subtotal: item.producto.precio * item.cantidad
-      })),
-      subtotal: this.carritoService.subtotal(),
-      impuestos: this.carritoService.impuestos()
-    };
+    this.pedidoService.crearPedido(nuevoPedido).subscribe({
+      next: (pedido) => {
+        this.lastOrder = {
+          ...pedido,
+          paymentMethod: this.paymentForm.get('method')?.value,
+          client: {
+            nombre: usuario.nombre,
+            email: usuario.email,
+          },
+          items: items.map(item => ({
+            nombre: item.producto.nombre,
+            cantidad: item.cantidad,
+            precio: item.producto.precio,
+            subtotal: item.producto.precio * item.cantidad
+          })),
+          subtotal: this.carritoService.subtotal(),
+          impuestos: this.carritoService.impuestos()
+        };
 
-    this.orderPlaced.set(true);
-    this.carritoService.vaciar();
+        this.orderPlaced.set(true);
+        this.carritoService.vaciar();
+        this.procesando.set(false);
+        this.productoService.cargarProductos(true).subscribe({ error: () => { } });
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.procesando.set(false);
+        this.mensajeError.set(
+          err.error?.message ?? 'No se pudo completar la compra. Intentá nuevamente.',
+        );
+      },
+    });
   }
 
   printInvoice(): void {

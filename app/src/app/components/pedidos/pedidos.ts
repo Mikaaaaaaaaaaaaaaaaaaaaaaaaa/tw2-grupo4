@@ -25,6 +25,7 @@ export class Pedidos implements OnInit {
   );
 
   ngOnInit(): void {
+    this.pedidoService.cargarPedidos().subscribe({ error: () => { } });
     if (this.productoService.productos().length === 0) {
       this.productoService.cargarProductos().subscribe({ error: () => { } });
     }

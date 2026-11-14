@@ -64,7 +64,7 @@
                 <div class="quantity-control" [attr.aria-label]="'Cantidad de ' + item.producto.nombre">
                   <button type="button" (click)="disminuir(item.producto.id)" aria-label="Disminuir cantidad">−</button>
                   <span>{{ item.cantidad }}</span>
-                  <button type="button" (click)="incrementar(item.producto.id)" aria-label="Aumentar cantidad">+</button>
+                   <button type="button" (click)="incrementar(item.producto.id)" [disabled]="item.cantidad >= item.producto.stock" aria-label="Aumentar cantidad">+</button>
                 </div>
                 <strong class="cart-line-total">${{ item.producto.precio * item.cantidad | number:'1.2-2' }}</strong>
               </div>

@@ -5,6 +5,10 @@
     <h1>Finalizar Compra</h1>
   </header>
 
+  <div *ngIf="mensajeError()" role="alert" class="card" style="color: #b91c1c; border: 1px solid #fca5a5; background: #fef2f2; margin-bottom: 1rem;">
+    {{ mensajeError() }}
+  </div>
+
   <div class="checkout-grid">
     <section class="checkout-details">
       <!-- Datos del Comprador -->
@@ -69,8 +73,8 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-confirm" [disabled]="carritoService.items().length === 0">
-            Confirmar y Pagar ${{ carritoService.total() | number:'1.2-2' }}
+          <button type="submit" class="btn-confirm" [disabled]="carritoService.items().length === 0 || procesando()">
+            {{ procesando() ? 'Procesando...' : 'Confirmar y Pagar' }} ${{ carritoService.total() | number:'1.2-2' }}
           </button>
         </form>
       </div>

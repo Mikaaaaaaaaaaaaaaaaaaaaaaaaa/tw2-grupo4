@@ -1,3 +1,6 @@
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { PedidoService } from './pedido';
 import { NuevoPedido } from '../models/pedido';
 
@@ -9,22 +12,32 @@ const base: NuevoPedido = {
 };
 
 describe('PedidoService', () => {
-  beforeEach(() => localStorage.clear());
-  afterEach(() => localStorage.clear());
+  let service: PedidoService;
+  let httpMock: HttpTestingController;
 
-  it('asigna ids incrementales y deja el más nuevo primero', () => {
-    const service = new PedidoService();
-    service.crearPedido(base);
-    service.crearPedido(base);
-
-    expect(service.pedidos().map((p) => p.id)).toEqual([2, 1]);
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
+    service = TestBed.inject(PedidoService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('recupera los pedidos y el último id desde localStorage', () => {
-    new PedidoService().crearPedido(base);
+  afterEach(() => httpMock.verify());
 
-    const recargado = new PedidoService();
-    expect(recargado.pedidos()).toHaveLength(1);
-    expect(recargado.crearPedido(base).id).toBe(2);
+  it('agrega los pedidos recibidos del backend al principio', () => {
+    service.crearPedido(base).subscribe();
+    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush({ id: 1, ...base });
+    service.crearPedido(base).subscribe();
+    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush({ id: 2, ...base });
+
+    expect(service.pedidos().map((pedido) => pedido.id)).toEqual([2, 1]);
+  });
+
+  it('carga los pedidos desde el backend', () => {
+    service.cargarPedidos().subscribe();
+    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush([{ id: 4, ...base }]);
+
+    expect(service.pedidos().map((pedido) => pedido.id)).toEqual([4]);
   });
 });

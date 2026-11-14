@@ -19,6 +19,7 @@ export async function listarProductos(
             productos.map((p) => ({
                 ...p,
                 price: Number(p.price),
+                stock: p.stock,
                 rating: p.rating !== null ? Number(p.rating) : null,
             })),
         );
@@ -51,6 +52,7 @@ export async function obtenerProductoPorId(
         res.json({
             ...producto,
             price: Number(producto.price),
+            stock: producto.stock,
             rating: producto.rating !== null ? Number(producto.rating) : null,
         });
     } catch (error) {

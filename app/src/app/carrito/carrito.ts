@@ -31,10 +31,13 @@ export class Carrito {
   }
 
   incrementar(productoId: number): void {
-    this.carritoService.incrementar(productoId);
+    if (!this.carritoService.incrementar(productoId)) {
+      this.mensajeError = 'No podés agregar más unidades: alcanzaste el stock disponible.';
+    }
   }
 
   disminuir(productoId: number): void {
+    this.mensajeError = '';
     this.carritoService.disminuir(productoId);
   }
 

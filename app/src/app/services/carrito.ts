@@ -26,11 +26,14 @@ export class CarritoService {
   readonly impuestos = computed(() => this.subtotal() * 0.21);
   readonly total = computed(() => this.subtotal() + this.impuestos());
 
-  agregar(producto: Product): void {
+  agregar(producto: Product): boolean {
+    let agregado = false;
     this.itemsSignal.update((items) => {
       const existente = items.find((item) => item.producto.id === producto.id);
 
       if (existente) {
+        if (existente.cantidad >= producto.stock) return items;
+        agregado = true;
         return items.map((item) =>
           item.producto.id === producto.id
             ? { ...item, cantidad: item.cantidad + 1 }
@@ -38,20 +41,26 @@ export class CarritoService {
         );
       }
 
+      if (producto.stock <= 0) return items;
+      agregado = true;
       return [...items, { producto, cantidad: 1 }];
     });
-    this.guardar();
+    if (agregado) this.guardar();
+    return agregado;
   }
 
-  incrementar(productoId: number): void {
+  incrementar(productoId: number): boolean {
+    let incrementado = false;
     this.itemsSignal.update((items) =>
-      items.map((item) =>
-        item.producto.id === productoId
-          ? { ...item, cantidad: item.cantidad + 1 }
-          : item,
-      ),
+      items.map((item) => {
+        if (item.producto.id !== productoId) return item;
+        if (item.cantidad >= item.producto.stock) return item;
+        incrementado = true;
+        return { ...item, cantidad: item.cantidad + 1 };
+      }),
     );
-    this.guardar();
+    if (incrementado) this.guardar();
+    return incrementado;
   }
 
   disminuir(productoId: number): void {

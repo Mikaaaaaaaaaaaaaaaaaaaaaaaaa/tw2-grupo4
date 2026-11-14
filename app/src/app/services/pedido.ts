@@ -1,37 +1,26 @@
-import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
 import { NuevoPedido, Pedido } from '../models/pedido';
-
-const CLAVE_STORAGE = 'techstore.pedidos';
+import { tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PedidoService {
-  private readonly listaPedidos = signal<Pedido[]>(this.cargar());
-  private ultimoId = this.listaPedidos().reduce((max, p) => Math.max(max, p.id), 0);
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/pedidos`;
+  private readonly listaPedidos = signal<Pedido[]>([]);
 
   public readonly pedidos = this.listaPedidos.asReadonly();
 
-  public crearPedido(nuevo: NuevoPedido): Pedido {
-    const pedido: Pedido = { id: ++this.ultimoId, ...nuevo };
-
-    this.listaPedidos.update((lista) => [pedido, ...lista]);
-    this.guardar();
-    return pedido;
+  public cargarPedidos() {
+    return this.http.get<Pedido[]>(this.url).pipe(
+      tap((pedidos) => this.listaPedidos.set(pedidos)),
+    );
   }
 
-  private cargar(): Pedido[] {
-    try {
-      const guardado = localStorage.getItem(CLAVE_STORAGE);
-      return guardado ? (JSON.parse(guardado) as Pedido[]) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private guardar(): void {
-    try {
-      localStorage.setItem(CLAVE_STORAGE, JSON.stringify(this.listaPedidos()));
-    } catch {
-      // Sin storage disponible: seguimos solo en memoria.
-    }
+  public crearPedido(nuevo: NuevoPedido) {
+    return this.http.post<Pedido>(this.url, nuevo).pipe(
+      tap((pedido) => this.listaPedidos.update((lista) => [pedido, ...lista])),
+    );
   }
 }

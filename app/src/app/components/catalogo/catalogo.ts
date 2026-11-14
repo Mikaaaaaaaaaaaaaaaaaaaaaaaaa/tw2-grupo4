@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { Product } from '../../models/product';
 import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +34,15 @@ export class Catalogo implements OnInit {
     private productoService: ProductoService,
     private carritoService: CarritoService,
     private loginService: LoginService,
-  ) { }
+  ) {
+    effect(() => {
+      const lista = this.productoService.productos();
+      if (lista.length > 0) {
+        this.productos = lista;
+        this.aplicarFiltrosBusquedas();
+      }
+    });
+  }
 
   public ngOnInit(): void {
     this.productoService.cargarProductos().subscribe({
@@ -115,8 +123,19 @@ export class Catalogo implements OnInit {
   }
 
   public agregarAlCarritoDeCompras(producto: Product): void {
-    this.carritoService.agregar(producto);
+    if (!this.carritoService.agregar(producto)) {
+      this.mostrarToast(`No hay más stock disponible de "${producto.nombre}".`);
+      return;
+    }
     this.mostrarToast(`Se ha agregado "${producto.nombre}" al carrito de compras.`);
+  }
+
+  public cantidadEnCarrito(productoId: number): number {
+    return this.carritoService.items().find((item) => item.producto.id === productoId)?.cantidad ?? 0;
+  }
+
+  public puedeAgregar(producto: Product): boolean {
+    return producto.stock > this.cantidadEnCarrito(producto.id);
   }
 
   private sinTildes(texto: string): string {

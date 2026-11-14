@@ -3,6 +3,7 @@ import express from "express";
 import { prisma } from "./config/db";
 import authRouter from "./routes/login.routes";
 import productoRouter from "./routes/producto.routes";
+import pedidoRouter from "./routes/pedido.routes";
 import cors from "cors";
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(cors()); // antes de las rutas
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/products", productoRouter);
+app.use("/api/pedidos", pedidoRouter);
 
 app.get("/api/health", async (_req, res) => {
   try {
