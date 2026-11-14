@@ -23,7 +23,7 @@
   padding: 0 12px;
 
   background-color: transparent;
-  color: var(--color-text, #0F172A);
+  color: var(--color-primary, #0F172A);
 
   border: 1px solid transparent;
   border-radius: 8px;
@@ -310,6 +310,10 @@
 /* Responsive */
 
 @media (max-width: 480px) {
+  .cart-trigger {
+    font-size: 13px;
+  }
+
   .cart-panel {
     width: 100%;
   }
