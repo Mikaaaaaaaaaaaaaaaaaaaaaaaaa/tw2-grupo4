@@ -1,4 +1,9 @@
-import { crear as crearProductoEnRepositorio } from "../repositories/producto";
+import { 
+  crear as crearProductoEnRepositorio,
+  listar as listarProductosEnRepositorio,
+  type FiltrosProductos,
+} from "../repositories/producto";
+
 import {
   type DatosProducto,
   type ErrorValidacionProducto,
@@ -55,4 +60,19 @@ export async function crearProducto(datos: unknown) {
   }
 
   return crearProductoEnRepositorio(producto);
+}
+
+export async function listarProductos(filtros?: FiltrosProductos) {
+  const productos = await listarProductosEnRepositorio(filtros);
+
+  return productos.map((producto: any) => ({
+    id: producto.id,
+    title: producto.title,
+    description: producto.description,
+    price: Number(producto.price),
+    category: producto.category,
+    image: producto.image ?? null,
+    stock: producto.stock,
+    rating: producto.rating !== null ? Number(producto.rating) : null,
+}));
 }
