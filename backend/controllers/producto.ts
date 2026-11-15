@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/db";
 import {
     crearProducto as crearProductoEnServicio,
+    listarProductos as listarProductosEnServicio,
     ErrorValidacion,
 } from "../services/producto";
 
@@ -11,18 +12,31 @@ export async function listarProductos(
     next: NextFunction,
 ): Promise<void> {
     try {
-        const productos = await prisma.products.findMany({
-            orderBy: { id: "asc" },
-        });
+        // const productos = await prisma.products.findMany({
+        //     orderBy: { id: "asc" },
+        // });
 
-        res.json(
-            productos.map((p) => ({
-                ...p,
-                price: Number(p.price),
-                stock: p.stock,
-                rating: p.rating !== null ? Number(p.rating) : null,
-            })),
-        );
+        const { category, q } = _req.query;
+
+        const filtros = {
+            ...(typeof category === "string" && category.trim() !== ""
+                ? { category: category.trim() }
+                : {}),
+            ...(typeof q === "string" && q.trim() !== ""
+                ? { q: q.trim() }
+                : {}),
+        };
+
+        const productos = await listarProductosEnServicio(filtros);
+
+        res.json(productos);
+        //     productos.map((p) => ({
+        //         ...p,
+        //         price: Number(p.price),
+        //         stock: p.stock,
+        //         rating: p.rating !== null ? Number(p.rating) : null,
+        //     })),
+        // );
     } catch (error) {
         next(error);
     }
