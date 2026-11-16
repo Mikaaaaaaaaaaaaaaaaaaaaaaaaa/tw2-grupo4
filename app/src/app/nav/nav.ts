@@ -10,7 +10,7 @@ import { Login } from '../components/login/login';
   templateUrl: './nav.html',
 })
 export class Nav {
-    protected readonly login = inject(LoginService);
+  protected readonly login = inject(LoginService);
 
   private router = inject(Router);
 

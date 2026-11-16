@@ -23,11 +23,12 @@
             <span class="text-xs text-slate-400 block">Precio final</span>
             <span class="text-3xl font-extrabold text-slate-900">${{ producto.precio.toFixed(2) }}</span>
           </div>
-
+          @if (!esAdmin()) {
           <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl py-3 shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
             <i class="fa-solid fa-cart-plus"></i>
             Agregar al Carrito
           </button>
+        }
         </div>
 
       </div>

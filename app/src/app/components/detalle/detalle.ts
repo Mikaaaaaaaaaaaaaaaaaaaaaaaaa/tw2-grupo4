@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductoService } from '../../services/producto';
 import { Product } from '../../models/product';
 import { CarritoService } from '../../services/carrito';
+import { LoginService } from '../../services/login';
 
 @Component({
   imports: [RouterLink],
@@ -14,6 +15,9 @@ export class Detalle implements OnInit {
   private route = inject(ActivatedRoute);
   private productoService = inject(ProductoService);
   private carritoService = inject(CarritoService);
+  private loginService = inject(LoginService);
+
+  protected readonly esAdmin = this.loginService.esAdmin;
 
   producto?: Product;
 
@@ -25,8 +29,11 @@ export class Detalle implements OnInit {
   }
 
   agregarAlCarrito(): void {
-    if (this.producto) {
-      this.carritoService.agregar(this.producto);
+    // El admin no compra, aunque el botón no se muestre
+    if (this.esAdmin() || !this.producto) {
+      return;
     }
+
+    this.carritoService.agregar(this.producto);
   }
 }

@@ -37,7 +37,7 @@
         Catálogo
       </a>
     </li>
-
+    @if (!login.esAdmin()) {
     <li>
       <a
         class="nav-link"
@@ -49,24 +49,25 @@
         <span>Mis pedidos</span>
       </a>
     </li>
-
+  }
+    @if (login.esAdmin()) {
     <li>
-      @if (login.esAdmin()) {
-        <a
-          class="nav-link"
-          routerLink="/productos/nuevo"
-          routerLinkActive="nav-link--active"
-          [routerLinkActiveOptions]="{ exact: true }"
-        >
-          <i class="fas fa-plus nav-icon" aria-hidden="true"></i>
-          <span>Cargar producto</span>
-        </a>
-      }
+      <a
+        class="nav-link"
+        routerLink="/productos/nuevo"
+        routerLinkActive="nav-link--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <i class="fas fa-plus nav-icon" aria-hidden="true"></i>
+        <span>Cargar producto</span>
+      </a>
     </li>
-
+  }
+    @if (!login.esAdmin()) {
     <li class="cart-item">
       <app-carrito></app-carrito>
     </li>
+  }
   </ul>
 </nav>
 

@@ -23,6 +23,9 @@ export class Catalogo implements OnInit {
   public get usuarioActual(): string | null {
     return this.loginService.usuario()?.nombre ?? null;
   }
+  public get esAdmin(): boolean {
+  return this.loginService.esAdmin();
+}
   public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio', 'Componentes'];
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
