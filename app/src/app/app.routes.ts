@@ -7,11 +7,10 @@ import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 import { clienteGuard } from './guards/cliente.guard';
 
-
 export const routes: Routes = [
   {
     path: 'productos/nuevo',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: () =>
       import('./pages/cargar-producto/cargar-producto').then(
         (m) => m.CargarProducto,
@@ -25,14 +24,9 @@ export const routes: Routes = [
   { path: 'catalogo', component: Catalogo },
   { path: 'mis-pedidos', component: Pedidos, canActivate: [authGuard, clienteGuard] },
   { path: 'checkout', component: Checkout, canActivate: [authGuard, clienteGuard] },
-  { path: 'restablecer', loadComponent: () => import('./components/restablecer/restablecer').then((m) => m.Restablecer) },
   {
-  path: 'productos/nuevo',
-  canActivate: [authGuard, adminGuard],
-  loadComponent: () =>
-    import('./pages/cargar-producto/cargar-producto').then(
-      (m) => m.CargarProducto,
-    ),
-},
+    path: 'restablecer',
+    loadComponent: () =>
+      import('./components/restablecer/restablecer').then((m) => m.Restablecer),
+  },
 ];
-

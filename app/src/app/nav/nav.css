@@ -22,7 +22,7 @@
   align-items: center;
   gap: 28px;
   justify-content: space-between;
-  
+
 
   width: calc(100% - 32px);
   padding: 12px 24px;
@@ -286,5 +286,66 @@
   .nav-link {
     padding: 0 7px;
     font-size: 12px;
+  }
+}
+
+.sesion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 20px;
+  border-left: 1px solid var(--color-border);
+}
+
+.sesion-nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.sesion-btn {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: var(--color-accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease;
+}
+
+.sesion-btn:hover {
+  background-color: #3730a3;
+}
+
+.sesion-btn.secundario {
+  color: var(--color-accent);
+  background-color: #eef2ff;
+}
+
+.sesion-btn.secundario:hover {
+  background-color: #e0e7ff;
+}
+
+@media (max-width: 760px) {
+  .marca {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    gap: 12px;
+  }
+
+  .sesion {
+    padding-left: 12px;
+  }
+
+  .sesion-nombre {
+    font-size: 15px;
   }
 }
