@@ -5,6 +5,7 @@ import { Pedidos } from './components/pedidos/pedidos';
 import { Checkout } from './components/checkout/checkout';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { clienteGuard } from './guards/cliente.guard';
 
 
 export const routes: Routes = [
@@ -22,8 +23,8 @@ export const routes: Routes = [
     children: [{ path: 'producto/:id', component: Detalle }],
   },
   { path: 'catalogo', component: Catalogo },
-  { path: 'mis-pedidos', component: Pedidos, canActivate: [authGuard] },
-  { path: 'checkout', component: Checkout, canActivate: [authGuard] },
+  { path: 'mis-pedidos', component: Pedidos, canActivate: [authGuard, clienteGuard] },
+  { path: 'checkout', component: Checkout, canActivate: [authGuard, clienteGuard] },
   { path: 'restablecer', loadComponent: () => import('./components/restablecer/restablecer').then((m) => m.Restablecer) },
   {
   path: 'productos/nuevo',
