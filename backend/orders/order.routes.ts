@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth } from "../middleware/auth.placeholder";
+import { requireAuth } from "../middleware/auth";
 import { crear, listar } from "./order.controller";
 
 export const orderRouter = Router();

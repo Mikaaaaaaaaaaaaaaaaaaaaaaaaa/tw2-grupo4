@@ -4,6 +4,7 @@ import { Detalle } from './components/detalle/detalle';
 import { Pedidos } from './components/pedidos/pedidos';
 import { Checkout } from './components/checkout/checkout';
 import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -22,4 +23,12 @@ export const routes: Routes = [
   { path: 'catalogo', component: Catalogo },
   { path: 'mis-pedidos', component: Pedidos, canActivate: [authGuard] },
   { path: 'checkout', component: Checkout, canActivate: [authGuard] },
+  {
+  path: 'productos/nuevo',
+  canActivate: [authGuard, adminGuard],
+  loadComponent: () =>
+    import('./pages/cargar-producto/cargar-producto').then(
+      (m) => m.CargarProducto,
+    ),
+},
 ];

@@ -37,6 +37,7 @@
     </li>
 
     <li>
+      @if (login.esAdmin()) {
       <a
         class="nav-link"
         routerLink="/productos/nuevo"
@@ -46,6 +47,7 @@
         <i class="fas fa-plus nav-icon" aria-hidden="true"></i>
         <span>Cargar producto</span>
       </a>
+      }
     </li>
 
     <li class="cart-item">
