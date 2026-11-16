@@ -1,13 +1,40 @@
 import { Component, inject } from '@angular/core';
 import { Carrito } from '../carrito/carrito';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LoginService } from '../services/login';
+import { Login } from '../components/login/login';
 @Component({
-  imports: [Carrito, RouterLink, RouterLinkActive],
+  imports: [Carrito, RouterLink, RouterLinkActive, Login],
   selector: 'app-nav',
   styleUrl: './nav.css',
   templateUrl: './nav.html',
 })
 export class Nav {
     protected readonly login = inject(LoginService);
+
+  private router = inject(Router);
+
+  public mostrarLogin = false;
+
+  public get nombreUsuario(): string | null {
+    return this.login.usuario()?.nombre ?? null;
+  }
+
+  public abrirLogin(): void {
+    this.mostrarLogin = true;
+  }
+
+  public cerrarLogin(): void {
+    this.mostrarLogin = false;
+  }
+
+  public alAutenticar(): void {
+    this.mostrarLogin = false;
+  }
+
+  public cerrarSesion(): void {
+    this.login.logout();
+    this.router.navigate(['/']); // si estaba en una página protegida, vuelve al inicio
+  }
+
 }
