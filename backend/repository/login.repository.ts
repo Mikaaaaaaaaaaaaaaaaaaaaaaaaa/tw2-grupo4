@@ -14,4 +14,15 @@ export class UsuarioRepository {
   }) {
     return await prisma.users.create({ data });
   }
+
+  async buscarPorId(id: number) {
+    return await prisma.users.findUnique({ where: { id } });
+  }
+
+  async actualizarPassword(id: number, password_hash: string) {
+    return await prisma.users.update({
+      where: { id },
+      data: { password_hash },
+    });
+  }
 }
