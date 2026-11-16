@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -7,6 +7,7 @@ export interface Usuario {
   id: number;
   nombre: string;
   email: string;
+  role: 'USER' | 'ADMIN';
   token: string;
 }
 
@@ -19,6 +20,7 @@ export class LoginService {
 
   private readonly usuarioSignal = signal<Usuario | null>(this.cargar());
   readonly usuario = this.usuarioSignal.asReadonly();
+  readonly esAdmin = computed(() => this.usuarioSignal()?.role === 'ADMIN');
 
   login(email: string, password: string) {
     return this.http

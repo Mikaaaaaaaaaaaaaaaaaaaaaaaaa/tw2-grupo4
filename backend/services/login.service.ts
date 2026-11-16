@@ -1,6 +1,7 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import type { UsuarioRepository } from "../repository/login.repository";
 import type { Usuario } from "../models/usuario.model";
+import type { Rol } from "../models/rol.model";
 import jwt from "jsonwebtoken";
 
 function hashear(password: string): string {
@@ -18,12 +19,30 @@ function coincide(password: string, guardado: string): boolean {
   return nuevo.length === hashGuardado.length && timingSafeEqual(nuevo, hashGuardado);
 }
 
-function crearToken(usuario: { id: number; email: string }): string {
+interface DatosSesion {
+  id: number;
+  nombre: string;
+  email: string;
+  role: string;
+}
+
+function crearToken(usuario: { id: number; email: string; role: Rol }): string {
   return jwt.sign(
-    { id: usuario.id, email: usuario.email },
+    { id: usuario.id, email: usuario.email, role: usuario.role },
     process.env.JWT_SECRET!,
     { expiresIn: "7d" },
   );
+}
+
+function armarSesion(usuario: DatosSesion) {
+  const role = usuario.role as Rol;
+  return {
+    id: usuario.id,
+    nombre: usuario.nombre,
+    email: usuario.email,
+    role,
+    token: crearToken({ id: usuario.id, email: usuario.email, role }),
+  };
 }
 
 export class LoginService {
@@ -49,7 +68,7 @@ export class LoginService {
       direccion,
     });
 
-    return { id: usuario.id, nombre: usuario.nombre, email: usuario.email, token: crearToken({ id: usuario.id, email: usuario.email }) };
+    return armarSesion(usuario);
   }
 
   async login(email: string, password: string) {
@@ -59,6 +78,6 @@ export class LoginService {
       throw new Error("CredencialesInvalidas");
     }
 
-    return { id: usuario.id, nombre: usuario.nombre, email: usuario.email, token: crearToken({ id: usuario.id, email: usuario.email }) };
+    return armarSesion(usuario);
   }
 }
