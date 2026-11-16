@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { Nav } from './nav/nav';
+
 
 @Component({
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, Nav],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
