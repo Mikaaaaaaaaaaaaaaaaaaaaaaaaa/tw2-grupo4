@@ -55,7 +55,6 @@
         <option value="destacados">Destacados</option>
         <option value="precio-menor">Precio: Menor a Mayor</option>
         <option value="precio-mayor">Precio: Mayor a Menor</option>
-        <option value="rating">Mejor Calificados</option>
       </select>
     </div>
   </div>
@@ -68,9 +67,6 @@
     <div class="relative h-48 bg-slate-100 overflow-hidden cursor-pointer" [routerLink]="['/producto', prod.id]">
         <img [src]="prod.imagen" [alt]="prod.nombre" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
-        <span class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md text-slate-800 text-xs font-bold px-2 py-0.5 rounded-md shadow-sm">
-            <i class="fa-solid fa-star text-amber-400"></i> {{ prod.rating }}
-        </span>
     </div>
 
     <!-- Detalle. -->

@@ -102,8 +102,6 @@ export class Catalogo implements OnInit {
       resultado = resultado.sort((a, b) => a.precio - b.precio);
     } else if (this.orden === 'precio-mayor') {
       resultado = resultado.sort((a, b) => b.precio - a.precio);
-    } else if (this.orden === 'rating') {
-      resultado = resultado.sort((a, b) => b.rating - a.rating);
     }
 
     this.productosFiltrados = resultado;
