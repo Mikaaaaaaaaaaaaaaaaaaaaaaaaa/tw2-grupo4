@@ -56,9 +56,15 @@ export class LoginService {
     }
   }
 
-    get token(): string | null {
+  get token(): string | null {
     return this.usuarioSignal()?.token ?? null;
   }
 
+  recuperar(email: string) {
+    return this.http.post<{ message: string }>(`${this.url}/recuperar`, { email });
+  }
 
+  restablecer(token: string, password: string) {
+    return this.http.post<{ message: string }>(`${this.url}/restablecer`, { token, password });
+  }
 }
