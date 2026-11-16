@@ -6,6 +6,7 @@ import { Checkout } from './components/checkout/checkout';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 
+
 export const routes: Routes = [
   {
     path: 'productos/nuevo',
@@ -23,6 +24,7 @@ export const routes: Routes = [
   { path: 'catalogo', component: Catalogo },
   { path: 'mis-pedidos', component: Pedidos, canActivate: [authGuard] },
   { path: 'checkout', component: Checkout, canActivate: [authGuard] },
+  { path: 'restablecer', loadComponent: () => import('./components/restablecer/restablecer').then((m) => m.Restablecer) },
   {
   path: 'productos/nuevo',
   canActivate: [authGuard, adminGuard],
@@ -32,3 +34,4 @@ export const routes: Routes = [
     ),
 },
 ];
+

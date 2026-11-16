@@ -35,7 +35,7 @@
         <label class="flex items-center gap-2 text-slate-600">
           <input type="checkbox" formControlName="recordar" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"> Recordarme
         </label>
-        <a href="#" class="text-indigo-600 hover:underline font-medium">¿Olvidaste tu clave?</a>
+          <button type="button" (click)="cambiarPestana('recuperar')" class="text-indigo-600 hover:underline font-medium">¿Olvidaste tu clave?</button>
       </div>
 
       <p *ngIf="error" class="text-xs text-red-600">{{ error }}</p>
@@ -87,5 +87,25 @@
         Crear Cuenta
       </button>
     </form>
+
+    <!-- recuperar contraseña -->
+<form *ngIf="pestana === 'recuperar'" [formGroup]="formularioRecuperar" (ngSubmit)="enviarRecuperar()" class="space-y-4" novalidate>
+  <p class="text-sm text-slate-600">Ingresá tu correo y te enviamos un enlace para elegir una clave nueva.</p>
+
+  <div>
+    <label for="rec_email" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Correo Electrónico</label>
+    <input id="rec_email" type="email" formControlName="email" placeholder="tuusuario@unlam.edu.ar"
+      class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500">
+    <p *ngIf="tieneError(formularioRecuperar, 'email')" class="text-xs text-red-600 mt-1">Ingresá un correo válido.</p>
+  </div>
+
+  <p *ngIf="mensaje" class="text-xs text-emerald-600">{{ mensaje }}</p>
+  <p *ngIf="error" class="text-xs text-red-600">{{ error }}</p>
+
+  <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-md shadow-indigo-500/20">
+    Enviar enlace
+  </button>
+  <button type="button" (click)="cambiarPestana('login')" class="w-full text-sm text-slate-500 hover:text-slate-700">Volver a iniciar sesión</button>
+</form>
   </div>
 </div>
