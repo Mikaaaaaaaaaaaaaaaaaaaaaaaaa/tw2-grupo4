@@ -85,7 +85,7 @@ export class ProductoService {
       description: producto.descripcion,
       category: producto.clasificacion,
       price: producto.precio,
-      stock: 10,
+      stock: producto.stock,
       ...(producto.imagen ? { image: producto.imagen } : {}),
     };
 
