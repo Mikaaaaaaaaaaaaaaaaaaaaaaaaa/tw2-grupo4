@@ -23,6 +23,7 @@ type ProductoFormControls = {
   nombre: FormControl<string>;
   clasificacion: FormControl<string>;
   precio: FormControl<number>;
+  stock: FormControl<number>;
   imagen: FormControl<string>;
   descripcion: FormControl<string>;
 };
@@ -63,6 +64,11 @@ export class FormProducto {
       required: 'El precio es obligatorio.',
       min: 'El precio debe ser mayor a 0.',
     },
+    stock: {
+      required: 'El stock es obligatorio.',
+      min: 'El stock debe ser al menos 1.',
+      pattern: 'El stock debe ser un número entero.',
+    },
     imagen: {
       pattern: 'Ingresá una URL válida que comience con http:// o https://.',
     },
@@ -85,6 +91,11 @@ export class FormProducto {
       ]],
       clasificacion: ['', Validators.required],
       precio: [0, [Validators.required, Validators.min(0.01)]],
+      stock: [1, [
+        Validators.required,
+        Validators.min(1),
+        Validators.pattern(/^\d+$/),
+      ]],
       imagen: ['', Validators.pattern(/^https?:\/\/\S+$/i)],
       descripcion: ['', [
         Validators.required,
@@ -108,6 +119,7 @@ export class FormProducto {
       descripcion: valores.descripcion.trim(),
       clasificacion: valores.clasificacion.trim(),
       precio: Number(valores.precio),
+      stock: Number(valores.stock),
       ...(imagen ? { imagen } : {}),
     };
 
@@ -119,6 +131,7 @@ export class FormProducto {
       nombre: '',
       clasificacion: '',
       precio: 0,
+      stock: 1,
       imagen: '',
       descripcion: '',
     });
