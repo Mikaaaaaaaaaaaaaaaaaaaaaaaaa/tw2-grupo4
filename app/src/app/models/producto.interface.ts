@@ -4,6 +4,6 @@ export interface Producto {
   descripcion: string;
   clasificacion: string;
   precio: number;
-  stock?: number;
+  stock: number;
   imagen?: string;
 }

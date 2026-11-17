@@ -47,6 +47,17 @@
         <p id="error_precio" class="text-xs text-red-600 mt-1" role="alert">{{ mensaje }}</p>
       }
     </div>
+
+    <div>
+      <label for="producto_stock" class="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">Stock</label>
+      <input id="producto_stock" type="number" step="1" min="1" formControlName="stock"
+        class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-indigo-500 focus:border-indigo-500"
+        [class.border-red-500]="tieneError('stock')" [attr.aria-invalid]="tieneError('stock')"
+        [attr.aria-describedby]="tieneError('stock') ? 'error_stock' : null">
+      @if (mensajeError('stock'); as mensaje) {
+        <p id="error_stock" class="text-xs text-red-600 mt-1" role="alert">{{ mensaje }}</p>
+      }
+    </div>
   </div>
 
   <div>
