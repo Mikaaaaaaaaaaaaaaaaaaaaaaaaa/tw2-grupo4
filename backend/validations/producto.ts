@@ -91,10 +91,10 @@ export function validarProducto(
       campo: 'stock',
       mensaje: 'El stock debe ser un número entero.',
     });
-  } else if (datos.stock < 0) {
+  } else if (datos.stock < 1) {
     errores.push({
       campo: 'stock',
-      mensaje: 'El stock debe ser mayor o igual a 0.',
+      mensaje: 'El stock debe ser al menos 1.',
     });
   }
 
