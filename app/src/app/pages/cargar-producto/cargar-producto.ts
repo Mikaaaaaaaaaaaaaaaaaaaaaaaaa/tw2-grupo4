@@ -9,6 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormProducto } from '../../components/form-producto/form-producto';
 import { Producto } from '../../models/producto.interface';
 import { ProductoService } from '../../services/producto';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cargar-producto',
@@ -17,6 +18,7 @@ import { ProductoService } from '../../services/producto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CargarProducto {
+  private readonly router = inject(Router);
   private readonly productoService = inject(ProductoService);
   private readonly formulario = viewChild(FormProducto);
 
@@ -34,6 +36,10 @@ export class CargarProducto {
         this.guardando.set(false);
         this.exito.set(true);
         this.formulario()?.reiniciar();
+        
+        setTimeout(() => {
+          this.router.navigate(['/catalogo']);
+        }, 1500);
       },
       error: (error: unknown) => {
         this.guardando.set(false);

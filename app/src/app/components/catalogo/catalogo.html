@@ -1,13 +1,10 @@
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
   <!-- barra de sesion. -->
-<div class="flex items-center justify-start gap-3 text-xs bg-slate-900 text-slate-300 px-4 py-2 rounded-xl">
+<!-- <div class="flex items-center justify-start gap-3 text-xs bg-slate-900 text-slate-300 px-4 py-2 rounded-xl">
   <span>{{ usuarioActual ?? 'Invitado' }}</span>
   <button *ngIf="!usuarioActual" (click)="abrirLogin()" class="text-indigo-400 hover:text-indigo-200 font-semibold">Iniciar Sesión</button>
-<button *ngIf="usuarioActual" (click)="cerrarSesion()" class="text-indigo-400 hover:text-indigo-200 font-semibold">Cerrar Sesión</button></div>
-
-  <app-nav></app-nav>
-
+<button *ngIf="usuarioActual" (click)="cerrarSesion()" class="text-indigo-400 hover:text-indigo-200 font-semibold">Cerrar Sesión</button></div> -->
 
   <!-- Hero banner. -->
   <div class="relative bg-gradient-to-r from-slate-900 via-indigo-900 to-indigo-950 text-white rounded-xl p-6 sm:p-8 overflow-hidden shadow-xl border border-slate-800">
@@ -55,7 +52,6 @@
         <option value="destacados">Destacados</option>
         <option value="precio-menor">Precio: Menor a Mayor</option>
         <option value="precio-mayor">Precio: Mayor a Menor</option>
-        <option value="rating">Mejor Calificados</option>
       </select>
     </div>
   </div>
@@ -68,9 +64,6 @@
     <div class="relative h-48 bg-slate-100 overflow-hidden cursor-pointer" [routerLink]="['/producto', prod.id]">
         <img [src]="prod.imagen" [alt]="prod.nombre" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
 
-        <span class="absolute bottom-3 right-3 bg-white/90 backdrop-blur-md text-slate-800 text-xs font-bold px-2 py-0.5 rounded-md shadow-sm">
-            <i class="fa-solid fa-star text-amber-400"></i> {{ prod.rating }}
-        </span>
     </div>
 
     <!-- Detalle. -->
@@ -96,11 +89,12 @@
                 <span class="text-xs text-slate-400 block leading-none">Precio</span>
                 <span class="text-lg font-extrabold text-slate-900" id="precio_span">${{ prod.precio | number:'1.2-2' }}</span>
             </div>
-
+            @if (!esAdmin) {
             <button (click)="agregarAlCarritoDeCompras(prod)" [disabled]="!puedeAgregar(prod)" class="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white p-2.5 rounded-lg shadow-md shadow-indigo-500/20 active:scale-95 transition-all flex items-center gap-1.5 text-xs font-bold" id="agregar_al_carrito_button">
                 <i class="fa-solid fa-cart-plus text-sm"></i>
                 <span class="text-xs font-bold uppercase" id="agregar_al_carrito_span">Agregar</span>
             </button>
+          }
         </div>
     </div>
 

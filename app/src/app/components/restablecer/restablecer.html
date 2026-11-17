@@ -1,0 +1,30 @@
+<div class="max-w-md mx-auto mt-10 bg-white rounded-2xl p-6 space-y-4 shadow-xl border border-slate-100">
+  <h1 class="text-xl font-bold text-slate-800">Elegí una clave nueva</h1>
+
+  <div *ngIf="listo" class="space-y-3">
+    <p class="text-sm text-emerald-600">¡Listo! Tu contraseña fue actualizada.</p>
+    <a routerLink="/" class="inline-block bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl text-sm">Ir al catálogo</a>
+  </div>
+
+  <form *ngIf="!listo" [formGroup]="formulario" (ngSubmit)="enviar()" class="space-y-4" novalidate>
+    <div>
+      <label for="nueva" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Clave nueva</label>
+      <input id="nueva" type="password" formControlName="password" placeholder="Mínimo 6 caracteres"
+        class="w-full border border-slate-300 rounded-lg p-2.5 text-sm">
+      <p *ngIf="formulario.get('password')?.touched && formulario.get('password')?.invalid" class="text-xs text-red-600 mt-1">Mínimo 6 caracteres.</p>
+    </div>
+
+    <div>
+      <label for="confirmar" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Repetí la clave</label>
+      <input id="confirmar" type="password" formControlName="confirmar"
+        class="w-full border border-slate-300 rounded-lg p-2.5 text-sm">
+      <p *ngIf="formulario.get('confirmar')?.touched && formulario.hasError('noCoinciden')" class="text-xs text-red-600 mt-1">Las claves no coinciden.</p>
+    </div>
+
+    <p *ngIf="error" class="text-xs text-red-600">{{ error }}</p>
+
+    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm">
+      Guardar clave nueva
+    </button>
+  </form>
+</div>

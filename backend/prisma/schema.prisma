@@ -45,5 +45,6 @@ model users {
   nombre        String   @db.NVarChar(100)
   apellido      String   @db.NVarChar(100)
   direccion     String   @db.NVarChar(255)
+  role          String   @default("USER", map: "DF_users_role") @db.NVarChar(20)
   orders        orders[]
 }

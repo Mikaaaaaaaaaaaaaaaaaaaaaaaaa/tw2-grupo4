@@ -15,6 +15,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Producto } from '../../models/producto.interface';
 import { CATEGORIAS } from '../../models/categorias.const';
 
@@ -33,7 +34,7 @@ const noSoloEspacios: ValidatorFn = (
 
 @Component({
   selector: 'app-form-producto',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './form-producto.html',
   styleUrl: './form-producto.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

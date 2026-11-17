@@ -23,7 +23,10 @@ export class Catalogo implements OnInit {
   public get usuarioActual(): string | null {
     return this.loginService.usuario()?.nombre ?? null;
   }
-  public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio'];
+  public get esAdmin(): boolean {
+  return this.loginService.esAdmin();
+}
+  public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio', 'Componentes'];
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
   public orden: string = 'Destacados';
@@ -102,8 +105,6 @@ export class Catalogo implements OnInit {
       resultado = resultado.sort((a, b) => a.precio - b.precio);
     } else if (this.orden === 'precio-mayor') {
       resultado = resultado.sort((a, b) => b.precio - a.precio);
-    } else if (this.orden === 'rating') {
-      resultado = resultado.sort((a, b) => b.rating - a.rating);
     }
 
     this.productosFiltrados = resultado;

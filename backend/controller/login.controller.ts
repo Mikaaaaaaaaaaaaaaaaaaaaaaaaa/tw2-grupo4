@@ -11,12 +11,10 @@ export class LoginController {
       res.status(201).json(usuario);
     } catch (error: any) {
       if (error.message === "DatosInvalidos") {
-        return res
-          .status(400)
-          .json({
-            message:
-              "Completá todos los campos (clave de al menos 6 caracteres).",
-          });
+        return res.status(400).json({
+          message:
+            "Completá todos los campos (clave de al menos 6 caracteres).",
+        });
       }
       if (error.message === "EmailExistente") {
         return res
@@ -25,6 +23,40 @@ export class LoginController {
       }
       console.error(error);
       res.status(500).json({ message: "Error al registrar el usuario" });
+    }
+  };
+
+  public recuperar = async (req: Request, res: Response) => {
+    try {
+      await loginService.solicitarRecuperacion(req.body.email);
+      res
+        .status(200)
+        .json({
+          message: "Si el email está registrado, te enviamos un enlace.",
+        });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "No se pudo enviar el correo." });
+    }
+  };
+
+  public restablecer = async (req: Request, res: Response) => {
+    try {
+      await loginService.restablecer(req.body.token, req.body.password);
+      res.status(200).json({ message: "Contraseña actualizada." });
+    } catch (error: any) {
+      if (error.message === "DatosInvalidos") {
+        return res
+          .status(400)
+          .json({ message: "La clave debe tener al menos 6 caracteres." });
+      }
+      if (error.message === "TokenInvalido") {
+        return res
+          .status(400)
+          .json({ message: "El enlace es inválido o ya venció." });
+      }
+      console.error(error);
+      res.status(500).json({ message: "Error al restablecer la contraseña." });
     }
   };
 

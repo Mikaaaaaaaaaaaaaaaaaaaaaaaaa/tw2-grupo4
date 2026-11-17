@@ -13,7 +13,10 @@ export class Login {
   private login = inject(LoginService);
 
   // pestaña activa: 'login' o 'register'.
-  public pestana: 'login' | 'register' = 'login';
+  public pestana: 'login' | 'register' | 'recuperar' = 'login';
+
+  public formularioRecuperar: FormGroup;
+  public mensaje = '';
 
   public formularioLogin: FormGroup;
   public formularioRegistro: FormGroup;
@@ -32,6 +35,10 @@ export class Login {
       recordar: [true],
     });
 
+    this.formularioRecuperar = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+    });
+
     this.formularioRegistro = this.fb.group({
       nombre: ['', [Validators.required]],
       apellido: ['', [Validators.required]],
@@ -41,9 +48,10 @@ export class Login {
     });
   }
 
-  public cambiarPestana(pestana: 'login' | 'register'): void {
+  public cambiarPestana(pestana: 'login' | 'register' | 'recuperar'): void {
     this.pestana = pestana;
     this.error = '';
+    this.mensaje = '';
   }
 
   public enviarLogin(): void {
@@ -79,5 +87,18 @@ export class Login {
   public tieneError(formulario: FormGroup, campo: string): boolean {
     const control = formulario.get(campo);
     return !!control && control.invalid && control.touched;
+  }
+
+  public enviarRecuperar(): void {
+    if (this.formularioRecuperar.invalid) {
+      this.formularioRecuperar.markAllAsTouched();
+      return;
+    }
+    this.error = '';
+    this.mensaje = '';
+    this.login.recuperar(this.formularioRecuperar.value.email).subscribe({
+      next: (r) => (this.mensaje = r.message),
+      error: (e) => (this.error = e.error?.message ?? 'No se pudo conectar con el servidor.'),
+    });
   }
 }

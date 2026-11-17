@@ -1,6 +1,6 @@
 <nav class="nav">
   <!-- Logo y nombre -->
-  <a class="container-logo" href="/mise_en_place/inicio">
+  <a class="container-logo" routerLink="/">
     <img
       src="https://i.scdn.co/image/ab67616d00001e02331d2c8543d7d994c2215a65"
       alt="Logo de TechStore"
@@ -9,6 +9,20 @@
     <span class="brand-name">TechStore</span>
   </a>
 
+  <div class="sesion">
+    <span class="sesion-nombre">
+      <i class="fas fa-user" aria-hidden="true"></i>
+      {{ nombreUsuario ?? 'Invitado' }}
+    </span>
+
+    @if (nombreUsuario) {
+      <button type="button" class="sesion-btn secundario" (click)="cerrarSesion()">
+        Cerrar sesión
+      </button>
+    } @else {
+      <button type="button" class="sesion-btn" (click)="abrirLogin()">Iniciar sesión</button>
+    }
+  </div>
 
   <!-- Navegación -->
   <ul class="nav-list">
@@ -23,7 +37,7 @@
         Catálogo
       </a>
     </li>
-
+    @if (!login.esAdmin()) {
     <li>
       <a
         class="nav-link"
@@ -35,7 +49,8 @@
         <span>Mis pedidos</span>
       </a>
     </li>
-
+  }
+    @if (login.esAdmin()) {
     <li>
       <a
         class="nav-link"
@@ -47,9 +62,15 @@
         <span>Cargar producto</span>
       </a>
     </li>
-
+  }
+    @if (!login.esAdmin()) {
     <li class="cart-item">
       <app-carrito></app-carrito>
     </li>
+  }
   </ul>
 </nav>
+
+@if (mostrarLogin) {
+  <app-login (cerrar)="cerrarLogin()" (autenticado)="alAutenticar()"></app-login>
+}
