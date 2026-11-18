@@ -13,6 +13,7 @@
 
   <app-form-producto
     [guardando]="guardando()"
+    [erroresServidor]="erroresServidor()"
     (productoGuardado)="guardarProducto($event)"
   />
 </main>

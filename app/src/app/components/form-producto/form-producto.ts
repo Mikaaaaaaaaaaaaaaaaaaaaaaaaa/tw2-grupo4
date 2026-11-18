@@ -19,6 +19,14 @@ import { RouterLink } from '@angular/router';
 import { Producto } from '../../models/producto.interface';
 import { CATEGORIAS } from '../../models/categorias.const';
 
+export type CampoProducto =
+  | 'nombre'
+  | 'clasificacion'
+  | 'precio'
+  | 'stock'
+  | 'imagen'
+  | 'descripcion';
+
 type ProductoFormControls = {
   nombre: FormControl<string>;
   clasificacion: FormControl<string>;
@@ -42,6 +50,7 @@ const noSoloEspacios: ValidatorFn = (
 })
 export class FormProducto {
   readonly guardando = input(false);
+  readonly erroresServidor = input<Partial<Record<CampoProducto, string>>>({});
   readonly productoGuardado = output<Producto>();
   readonly categorias = CATEGORIAS;
 
@@ -157,5 +166,9 @@ export class FormProducto {
     const mensajes = this.mensajesError[campo];
     const tipoError = Object.keys(errores).find((tipo) => mensajes[tipo]);
     return tipoError ? mensajes[tipoError] ?? null : null;
+  }
+
+  public mensajeErrorServidor(campo: CampoProducto): string | null {
+    return this.erroresServidor()[campo] ?? null;
   }
 }
