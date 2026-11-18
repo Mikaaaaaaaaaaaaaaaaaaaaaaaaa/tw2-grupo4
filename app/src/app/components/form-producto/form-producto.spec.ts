@@ -25,6 +25,7 @@ describe('FormProducto', () => {
       nombre: 'Teclado Mecánico RGB',
       clasificacion: 'Periféricos',
       precio: 199.99,
+      stock: 1,
       imagen: 'https://images.unsplash.com/imagen.jpg',
       descripcion: 'Teclado mecánico con iluminación RGB.',
     });
@@ -39,12 +40,20 @@ describe('FormProducto', () => {
     expect(component.form.invalid).toBe(true);
   });
 
+  it('debe rechazar stock igual a cero', () => {
+    component.form.controls.stock.setValue(0);
+
+    expect(component.form.controls.stock.hasError('min')).toBe(true);
+    expect(component.form.invalid).toBe(true);
+  });
+
   it('debe emitir el producto con id cero', () => {
     const productoEsperado: Producto = {
       id: 0,
       nombre: 'Teclado Mecánico RGB',
       clasificacion: 'Periféricos',
       precio: 199.99,
+      stock: 1,
       descripcion: 'Teclado mecánico con iluminación RGB.',
       imagen: 'https://images.unsplash.com/imagen.jpg',
     };
@@ -54,6 +63,7 @@ describe('FormProducto', () => {
       nombre: ' Teclado Mecánico RGB ',
       clasificacion: 'Periféricos',
       precio: 199.99,
+      stock: 1,
       imagen: 'https://images.unsplash.com/imagen.jpg',
       descripcion: ' Teclado mecánico con iluminación RGB. ',
     });
