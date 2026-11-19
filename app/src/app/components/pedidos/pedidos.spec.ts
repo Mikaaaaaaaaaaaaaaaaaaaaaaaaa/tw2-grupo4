@@ -31,14 +31,15 @@ describe('Pedidos', () => {
     expect(html.querySelector('#lista_pedidos_ul')).toBeNull();
   });
 
-  it('lista los pedidos que devuelve el backend', async () => {
+  it('lista los pedidos mostrando el numero secuencial por usuario', async () => {
     http.expectOne(url).flush([{
-      id: 1, userId: 1, total: 2799.98, date: '2026-10-03T12:00:00.000Z',
+      id: 15, orderNumber: 1, userId: 2, total: 2799.98, date: '2026-10-03T12:00:00.000Z',
       items: [{ productId: 1, productName: 'Remera básica', quantity: 2, unitPrice: 1399.99 }],
     }]);
     await fixture.whenStable();
     const lista = (fixture.nativeElement as HTMLElement).querySelector('#lista_pedidos_ul')?.textContent;
     expect(lista).toContain('Pedido #1');
+    expect(lista).not.toContain('Pedido #15');
     expect(lista).toContain('Remera básica');
     expect(lista).toContain('2,799.98');
   });
