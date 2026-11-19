@@ -1,5 +1,6 @@
 import { prisma } from "../config/db";
 import { HttpError } from "../common/errors";
+import { totalConIva } from "./order.precios";
 
 export interface ItemInput {
   productId: number;
@@ -20,8 +21,6 @@ export function createOrder(userId: number, items: ItemInput[]) {
     const byId = new Map(products.map((p) => [p.id, p]));
 
     const lines: { product_id: number; quantity: number; unit_price: number }[] = [];
-    let totalCents = 0;
-
     for (const { productId, quantity } of items) {
       const product = byId.get(productId);
       if (!product) throw new HttpError(400, `El producto ${productId} no existe`);
@@ -34,11 +33,14 @@ export function createOrder(userId: number, items: ItemInput[]) {
 
       const unitPrice = Number(product.price);
       lines.push({ product_id: productId, quantity, unit_price: unitPrice });
-      totalCents += Math.round(unitPrice * 100) * quantity;
     }
 
     return tx.orders.create({
-      data: { user_id: userId, total: totalCents / 100, order_items: { create: lines } },
+      data: {
+        user_id: userId,
+        total: totalConIva(lines.map(({ unit_price, quantity }) => ({ unitPrice: unit_price, quantity }))),
+        order_items: { create: lines },
+      },
       include: orderInclude,
     });
   });
