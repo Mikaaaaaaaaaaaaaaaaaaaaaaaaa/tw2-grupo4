@@ -1,11 +1,15 @@
 import { HttpError } from "../common/errors";
 import { createOrder, findOrdersByUser, type ItemInput, type OrderRow } from "./order.repository";
+import { totalConIva } from "./order.precios";
 
 function toDto(o: OrderRow) {
   return {
     id: o.id,
     userId: o.user_id,
-    total: Number(o.total),
+    total: totalConIva(o.order_items.map((i) => ({
+      unitPrice: Number(i.unit_price),
+      quantity: i.quantity,
+    }))),
     date: o.fecha.toISOString(),
     items: o.order_items.map((i) => ({
       productId: i.product_id,

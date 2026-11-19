@@ -5,13 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Login } from '../login/login';
-import { Carrito } from '../../carrito/carrito';
 import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 
 @Component({
-  imports: [FormsModule, CommonModule, RouterModule, Login, Carrito, Nav],
+  imports: [FormsModule, CommonModule, RouterModule, Login, Nav],
   selector: 'app-catalogo',
   styleUrl: './catalogo.css',
   templateUrl: './catalogo.html',
