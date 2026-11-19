@@ -19,16 +19,45 @@
 
           <p class="text-sm text-slate-500 leading-relaxed">{{ producto.descripcion }}</p>
 
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <span class="text-xs text-slate-400 block">Precio final</span>
             <span class="text-3xl font-extrabold text-slate-900">${{ producto.precio.toFixed(2) }}</span>
+
+            @if (producto.stock === 0) {
+              <p class="mt-2 text-xs font-semibold text-red-600">Sin stock</p>
+            } @else if (stockDisponible() === 0) {
+              <p class="mt-2 text-xs font-semibold text-amber-600">
+                Stock: 0 disponibles (alcanzaste el máximo en tu carrito)
+              </p>
+            } @else {
+              <p class="mt-2 text-xs font-semibold text-emerald-600">
+                Stock: {{ stockDisponible() }} disponibles
+              </p>
+            }
           </div>
+
           @if (!esAdmin()) {
-          <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl py-3 shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
-            <i class="fa-solid fa-cart-plus"></i>
-            Agregar al Carrito
-          </button>
-        }
+            <button
+              type="button"
+              (click)="agregarAlCarrito()"
+              [disabled]="!puedeAgregar()"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:shadow-none text-white font-bold text-sm rounded-xl py-3 shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <i class="fa-solid fa-cart-plus"></i>
+              {{ producto.stock === 0 ? 'Sin stock' : 'Agregar al Carrito' }}
+            </button>
+
+            @if (feedback(); as aviso) {
+              <p
+                role="status"
+                class="text-xs font-semibold text-center"
+                [class.text-emerald-600]="aviso.tipo === 'ok'"
+                [class.text-red-600]="aviso.tipo === 'error'"
+              >
+                {{ aviso.texto }}
+              </p>
+            }
+          }
         </div>
 
       </div>
