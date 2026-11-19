@@ -1,4 +1,4 @@
-import { Component, OnInit, effect } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Product } from '../../models/product';
 import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
@@ -28,7 +28,9 @@ export class Catalogo implements OnInit {
   public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio', 'Componentes'];
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
-  public orden: string = 'Destacados';
+  public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
+  public paginaActual = 1;
+  public totalPaginas = 0;
 
   public mensajeToast: string | null = null;
 
@@ -36,21 +38,33 @@ export class Catalogo implements OnInit {
     private productoService: ProductoService,
     private carritoService: CarritoService,
     private loginService: LoginService,
-  ) {
-    effect(() => {
-      const lista = this.productoService.productos();
-      if (lista.length > 0) {
-        this.productos = lista;
-        this.aplicarFiltrosBusquedas();
-      }
-    });
-  }
+  ) {}
 
   public ngOnInit(): void {
-    this.productoService.cargarProductos().subscribe({
+    this.cargarDesdeBackend();
+  }
+
+  public cargarDesdeBackend(): void {
+    this.productoService.cargarProductos(true, {
+      page: this.paginaActual,
+      limit: 25,
+      ...(this.categoriaActiva !== 'Todos'
+        ? {
+            category:
+              this.categoriaActiva === 'Perifericos'
+                ? 'Periféricos'
+                : this.categoriaActiva,
+          }
+        : {}),
+      ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
+      sort: this.orden,
+    }).subscribe({
       next: (lista) => {
         this.productos = lista;
-        this.aplicarFiltrosBusquedas();
+        this.productosFiltrados = lista;
+        const paginacion = this.productoService.paginacion();
+        this.paginaActual = paginacion.page;
+        this.totalPaginas = paginacion.totalPages;
       },
       error: () => {
         this.mostrarToast('No se pudieron cargar los productos del servidor.');
@@ -78,40 +92,19 @@ export class Catalogo implements OnInit {
   }
 
   public aplicarFiltrosBusquedas(): void {
-    let resultado = [...this.productos];
-
-    // Filtro por categoría ignorando tildes y mayúsculas
-    if (this.categoriaActiva !== 'Todos') {
-      const catBuscada = this.sinTildes(this.categoriaActiva);
-      resultado = resultado.filter(
-        (p) => this.sinTildes(p.categoria) === catBuscada,
-      );
-    }
-
-    // Filtro por texto de búsqueda
-    if (this.busqueda.trim() !== '') {
-      const textoBuscado = this.busqueda.toLowerCase();
-
-      resultado = resultado.filter(
-        (p) =>
-          p.nombre.toLowerCase().includes(textoBuscado) ||
-          p.descripcion.toLowerCase().includes(textoBuscado),
-      );
-    }
-
-    // Ordenamiento de resultados
-    if (this.orden === 'precio-menor') {
-      resultado = resultado.sort((a, b) => a.precio - b.precio);
-    } else if (this.orden === 'precio-mayor') {
-      resultado = resultado.sort((a, b) => b.precio - a.precio);
-    }
-
-    this.productosFiltrados = resultado;
+    this.paginaActual = 1;
+    this.cargarDesdeBackend();
   }
 
   public filtrarPorCategoria(categoria: string): void {
     this.categoriaActiva = categoria;
     this.aplicarFiltrosBusquedas();
+  }
+
+  public cambiarPagina(pagina: number): void {
+    if (pagina < 1 || pagina > this.totalPaginas) return;
+    this.paginaActual = pagina;
+    this.cargarDesdeBackend();
   }
 
   public mostrarToast(mensaje: string): void {
@@ -138,11 +131,4 @@ export class Catalogo implements OnInit {
     return producto.stock > this.cantidadEnCarrito(producto.id);
   }
 
-  private sinTildes(texto: string): string {
-    return texto
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim();
-  }
 }
