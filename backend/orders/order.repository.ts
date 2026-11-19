@@ -37,10 +37,14 @@ export function createOrder(userId: number, items: ItemInput[]) {
       totalCents += Math.round(unitPrice * 100) * quantity;
     }
 
-    return tx.orders.create({
+    const order = await tx.orders.create({
       data: { user_id: userId, total: totalCents / 100, order_items: { create: lines } },
       include: orderInclude,
     });
+
+    const orderNumber = await tx.orders.count({ where: { user_id: userId } });
+
+    return { order, orderNumber };
   });
 }
 
