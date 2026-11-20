@@ -4,26 +4,11 @@ import type { FiltrosProductosNormalizados } from "../validations/productos-filt
 
 export type FiltrosProductos = FiltrosProductosNormalizados;
 
+function normalizarTexto(valor: string): string {
+  return valor.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
 export async function listar(filtros: FiltrosProductos) {
-  const where: {
-    category?: string;
-    OR?: Array<
-      | { title: { contains: string } }
-      | { description: { contains: string } }
-    >;
-  } = {};
-
-  if (filtros?.category) {
-    where.category = filtros.category;
-  }
-
-  if (filtros?.search) {
-    where.OR = [
-      { title: { contains: filtros.search } },
-      { description: { contains: filtros.search } },
-    ];
-  }
-
   const orderBy =
     filtros.sort === "precio-menor"
       ? { price: "asc" as const }
@@ -31,17 +16,32 @@ export async function listar(filtros: FiltrosProductos) {
         ? { price: "desc" as const }
         : { id: "asc" as const };
 
-  const [data, total] = await Promise.all([
-    prisma.products.findMany({
-      where,
-      orderBy,
-      skip: (filtros.page - 1) * filtros.limit,
-      take: filtros.limit,
-    }),
-    prisma.products.count({ where }),
-  ]);
+  const productos = await prisma.products.findMany({
+    orderBy,
+  });
 
-  return { data, total };
+  const categoriaBuscada = filtros.category
+    ? normalizarTexto(filtros.category)
+    : undefined;
+  const textoBusqueda = filtros.search
+    ? normalizarTexto(filtros.search)
+    : undefined;
+  const dataFiltrada = productos.filter((producto) => {
+    const coincideCategoria = categoriaBuscada === undefined
+      || normalizarTexto(producto.category) === categoriaBuscada;
+    const coincideBusqueda = textoBusqueda === undefined
+      || normalizarTexto(producto.title).includes(textoBusqueda)
+      || normalizarTexto(producto.description ?? '').includes(textoBusqueda)
+      || normalizarTexto(producto.category).includes(textoBusqueda);
+
+    return coincideCategoria && coincideBusqueda;
+  });
+  const data = dataFiltrada.slice(
+    (filtros.page - 1) * filtros.limit,
+    filtros.page * filtros.limit,
+  );
+
+  return { data, total: dataFiltrada.length };
 }
 
 export async function crear(producto: DatosProducto) {
