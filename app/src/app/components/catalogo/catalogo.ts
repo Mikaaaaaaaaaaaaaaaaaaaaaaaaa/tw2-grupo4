@@ -41,6 +41,9 @@ export class Catalogo implements OnInit {
   ) {}
 
   public ngOnInit(): void {
+    this.categoriaActiva = 'Todos';
+    this.busqueda = '';
+    this.paginaActual = 1;
     this.cargarDesdeBackend();
   }
 
@@ -97,6 +100,13 @@ export class Catalogo implements OnInit {
   }
 
   public filtrarPorCategoria(categoria: string): void {
+    if (categoria === 'Todos') {
+      this.categoriaActiva = 'Todos';
+      this.paginaActual = 1;
+      this.cargarDesdeBackend();
+      return;
+    }
+
     this.categoriaActiva = categoria;
     this.aplicarFiltrosBusquedas();
   }
