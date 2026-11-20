@@ -48,7 +48,7 @@ export class ProductoService {
   readonly paginacion = signal({
     total: 0,
     page: 1,
-    limit: 25,
+    limit: 12,
     totalPages: 0,
   });
 

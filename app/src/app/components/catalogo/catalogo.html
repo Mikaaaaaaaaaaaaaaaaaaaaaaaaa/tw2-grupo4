@@ -53,6 +53,18 @@
         <option value="precio-menor">Precio: Menor a Mayor</option>
         <option value="precio-mayor">Precio: Mayor a Menor</option>
       </select>
+
+      <label for="limite_por_pagina_select" class="flex items-center gap-2 whitespace-nowrap text-xs font-medium text-slate-700">
+        Mostrar:
+        <select
+          id="limite_por_pagina_select"
+          [ngModel]="limitePorPagina"
+          (ngModelChange)="cambiarLimitePorPagina($event)"
+          class="bg-slate-50 border border-slate-300 text-slate-700 text-xs rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 font-medium">
+          <option [ngValue]="12">12</option>
+          <option [ngValue]="24">24</option>
+        </select>
+      </label>
     </div>
   </div>
 

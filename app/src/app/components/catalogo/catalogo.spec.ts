@@ -43,7 +43,7 @@ describe('Catalogo', () => {
       ],
       total: 1,
       page: 1,
-      limit: 25,
+       limit: 12,
       totalPages: 1,
     });
     await fixture.whenStable();
@@ -58,9 +58,29 @@ describe('Catalogo', () => {
   });
 
   it('debe mostrar todos los productos al iniciar con el filtro Todas', () => {
+    expect(component.limitePorPagina).toBe(12);
     expect(component.categoriaActiva).toBe('Todos');
     expect(component.productosFiltrados).toEqual(component.productos);
     expect(component.productosFiltrados.length).toBeGreaterThan(0);
+  });
+
+  it('cambia a 24 productos por página y vuelve a la primera página', () => {
+    component.paginaActual = 3;
+
+    component.cambiarLimitePorPagina(24);
+
+    expect(component.limitePorPagina).toBe(24);
+    expect(component.paginaActual).toBe(1);
+    const request = httpMock.expectOne((req) => req.url.endsWith('/products'));
+    expect(request.request.params.get('limit')).toBe('24');
+    expect(request.request.params.get('page')).toBe('1');
+    request.flush({
+      data: [],
+      total: 0,
+      page: 1,
+      limit: 24,
+      totalPages: 0,
+    });
   });
 
   it('agrega el producto y solicita iniciar sesión cuando compra un invitado', () => {
@@ -83,11 +103,12 @@ describe('Catalogo', () => {
     expect(component.categoriaActiva).toBe('Todos');
     expect(component.busqueda).toBe('');
     expect(component.orden).toBe('destacados');
+    expect(component.limitePorPagina).toBe(12);
     httpMock.expectOne((req) => req.url.endsWith('/products')).flush({
       data: [],
       total: 0,
       page: 1,
-      limit: 25,
+      limit: 10,
       totalPages: 0,
     });
   });

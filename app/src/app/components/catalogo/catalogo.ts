@@ -28,6 +28,7 @@ export class Catalogo implements OnInit {
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
   public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
+  public limitePorPagina: 12 | 24 = 12;
   public paginaActual = 1;
   public totalPaginas = 0;
   private readonly cdr = inject(ChangeDetectorRef);
@@ -54,7 +55,7 @@ export class Catalogo implements OnInit {
   public cargarDesdeBackend(): void {
     this.productoService.cargarProductos(true, {
       page: this.paginaActual,
-      limit: 25,
+       limit: this.limitePorPagina,
       ...(this.categoriaActiva !== 'Todos'
         ? {
             category:
@@ -89,6 +90,15 @@ export class Catalogo implements OnInit {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
     this.orden = 'destacados';
+    this.limitePorPagina = 12;
+    this.paginaActual = 1;
+    this.cargarDesdeBackend();
+  }
+
+  public cambiarLimitePorPagina(limite: number): void {
+    if (limite !== 12 && limite !== 24) return;
+
+    this.limitePorPagina = limite;
     this.paginaActual = 1;
     this.cargarDesdeBackend();
   }
