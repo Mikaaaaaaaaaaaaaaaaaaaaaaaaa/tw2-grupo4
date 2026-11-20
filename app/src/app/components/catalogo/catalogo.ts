@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   imports: [FormsModule, CommonModule, RouterModule],
@@ -32,6 +33,9 @@ export class Catalogo implements OnInit {
   public paginaActual = 1;
   public totalPaginas = 0;
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly busquedaSubject = new Subject<string>();
+  private busquedaAplicada = '';
 
   public mensajeToast: string | null = null;
 
@@ -69,14 +73,26 @@ export class Catalogo implements OnInit {
     private loginService: LoginService,
   ) {
     this.loginService.sesionCerrada$
-      .pipe(takeUntilDestroyed(inject(DestroyRef)))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.resetearFiltros());
+
+    this.busquedaSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((busqueda) => {
+        if (busqueda === this.busquedaAplicada) return;
+        this.aplicarFiltrosBusquedas();
+      });
   }
 
   public ngOnInit(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
     this.paginaActual = 1;
+    this.busquedaAplicada = '';
     this.cargarDesdeBackend();
   }
 
@@ -117,6 +133,8 @@ export class Catalogo implements OnInit {
   public resetearFiltros(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
+    this.busquedaAplicada = '';
+    this.busquedaSubject.next('');
     this.orden = 'destacados';
     this.limitePorPagina = 12;
     this.paginaActual = 1;
@@ -132,8 +150,18 @@ export class Catalogo implements OnInit {
   }
 
   public aplicarFiltrosBusquedas(): void {
+    this.busquedaAplicada = this.busqueda;
     this.paginaActual = 1;
     this.cargarDesdeBackend();
+  }
+
+  public cambiarBusqueda(busqueda: string): void {
+    this.busqueda = busqueda;
+    this.busquedaSubject.next(busqueda);
+  }
+
+  public aplicarBusquedaInmediata(): void {
+    this.aplicarFiltrosBusquedas();
   }
 
   public filtrarPorCategoria(categoria: string): void {
