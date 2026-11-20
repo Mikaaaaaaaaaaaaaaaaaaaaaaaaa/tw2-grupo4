@@ -43,7 +43,7 @@
 
       <!-- Input de búsqueda. -->
       <div class="relative w-full sm:w-64">
-        <input type="text" [(ngModel)]="busqueda" (input)="aplicarFiltrosBusquedas()" placeholder="Buscar producto..." class="w-full bg-slate-100 text-slate-800 text-xs rounded-lg pl-8 pr-3 py-2 border border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all" id="buscador_input">
+        <input type="text" [ngModel]="busqueda" (ngModelChange)="cambiarBusqueda($event)" (keyup.enter)="aplicarBusquedaInmediata()" placeholder="Buscar producto..." class="w-full bg-slate-100 text-slate-800 text-xs rounded-lg pl-8 pr-3 py-2 border border-transparent focus:border-indigo-500 focus:bg-white focus:outline-none transition-all" id="buscador_input">
         <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
       </div>
 
@@ -80,7 +80,8 @@
   </p>
 
   <!-- Grilla de tarjetas. -->
-  <div *ngIf="productosFiltrados.length > 0; else sinProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <div class="min-h-[450px]">
+  <div *ngIf="productosFiltrados.length > 0; else sinProductos" [class.opacity-60]="cargandoProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 transition-opacity">
     <div *ngFor="let prod of productosFiltrados" class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
 
     <!-- Imagen. -->
@@ -130,6 +131,7 @@
       <p class="font-medium text-slate-600">Cargando productos...</p>
     </div>
   </ng-template>
+  </div>
 
   <ng-template #estadoVacio>
     <div class="py-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200" id="sin_resultados_div">
