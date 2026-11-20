@@ -45,7 +45,7 @@
 
     <!-- Selector de orden. -->
     <select [(ngModel)]="orden" (change)="aplicarFiltrosBusquedas()" class="h-9 bg-white border border-indigo-200 text-slate-800 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 text-xs font-medium p-2" id="ordenar_select">
-      <option value="destacados">Destacados</option>
+      <option value="" disabled hidden>Ordenar por...</option>
       <option value="precio-menor">Precio: Menor a Mayor</option>
       <option value="precio-mayor">Precio: Mayor a Menor</option>
     </select>
