@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Product } from '../../models/product';
 import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
@@ -37,7 +38,11 @@ export class Catalogo implements OnInit {
     private productoService: ProductoService,
     private carritoService: CarritoService,
     private loginService: LoginService,
-  ) {}
+  ) {
+    this.loginService.sesionCerrada$
+      .pipe(takeUntilDestroyed(inject(DestroyRef)))
+      .subscribe(() => this.resetearFiltros());
+  }
 
   public ngOnInit(): void {
     this.categoriaActiva = 'Todos';
@@ -78,6 +83,14 @@ export class Catalogo implements OnInit {
   public cerrarSesion(): void {
     this.loginService.logout();
     this.mostrarToast('Sesión cerrada correctamente.');
+  }
+
+  private resetearFiltros(): void {
+    this.categoriaActiva = 'Todos';
+    this.busqueda = '';
+    this.orden = 'destacados';
+    this.paginaActual = 1;
+    this.cargarDesdeBackend();
   }
 
   public aplicarFiltrosBusquedas(): void {

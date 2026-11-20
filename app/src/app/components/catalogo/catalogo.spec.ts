@@ -72,4 +72,23 @@ describe('Catalogo', () => {
     expect(carritoService.cantidadTotal()).toBe(1);
     expect(loginService.modalLoginAbierto()).toBe(true);
   });
+
+  it('limpia los filtros al cerrar sesión', () => {
+    component.categoriaActiva = 'Audio';
+    component.busqueda = 'auriculares';
+    component.orden = 'precio-mayor';
+
+    component.cerrarSesion();
+
+    expect(component.categoriaActiva).toBe('Todos');
+    expect(component.busqueda).toBe('');
+    expect(component.orden).toBe('destacados');
+    httpMock.expectOne((req) => req.url.endsWith('/products')).flush({
+      data: [],
+      total: 0,
+      page: 1,
+      limit: 25,
+      totalPages: 0,
+    });
+  });
 });
