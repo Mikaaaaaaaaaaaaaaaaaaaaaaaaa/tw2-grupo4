@@ -67,4 +67,23 @@ describe('Carrito', () => {
 
     expect(loginService.modalLoginAbierto()).toBe(true);
   });
+
+  it('vacía el carrito y elimina su persistencia al cerrar sesión', () => {
+    carritoService.agregar({
+      id: 1,
+      nombre: 'Producto',
+      precio: 10,
+      descripcion: '',
+      categoria: 'Audio',
+      imagen: '',
+      stock: 5,
+      rating: 5,
+    });
+    expect(localStorage.getItem('techstore.carrito')).not.toBeNull();
+
+    loginService.logout();
+
+    expect(carritoService.items()).toEqual([]);
+    expect(localStorage.getItem('techstore.carrito')).toBeNull();
+  });
 });

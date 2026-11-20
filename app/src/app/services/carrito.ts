@@ -1,5 +1,6 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { Product } from '../models/product';
+import { LoginService } from './login';
 
 export interface ItemCarrito {
   producto: Product;
@@ -11,6 +12,10 @@ const CLAVE_STORAGE = 'techstore.carrito';
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
   private readonly itemsSignal = signal<ItemCarrito[]>(this.cargar());
+
+  constructor(loginService: LoginService) {
+    loginService.sesionCerrada$.subscribe(() => this.vaciar());
+  }
 
   readonly items = this.itemsSignal.asReadonly();
   readonly cantidadTotal = computed(() =>
@@ -85,7 +90,7 @@ export class CarritoService {
 
   vaciar(): void {
     this.itemsSignal.set([]);
-    this.guardar();
+    localStorage.removeItem(CLAVE_STORAGE);
   }
 
   private cargar(): ItemCarrito[] {
