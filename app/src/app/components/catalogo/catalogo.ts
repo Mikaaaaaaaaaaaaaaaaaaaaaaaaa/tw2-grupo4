@@ -9,7 +9,7 @@ import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 
 @Component({
-  imports: [FormsModule, CommonModule, RouterModule, Nav],
+  imports: [FormsModule, CommonModule, RouterModule],
   selector: 'app-catalogo',
   styleUrl: './catalogo.css',
   templateUrl: './catalogo.html',

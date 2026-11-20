@@ -5,7 +5,7 @@ import { PedidoService } from '../../services/pedido';
 import { Nav } from '../../nav/nav';
 
 @Component({
-  imports: [RouterLink, DatePipe, DecimalPipe, Nav],
+  imports: [RouterLink, DatePipe, DecimalPipe],
   selector: 'app-pedidos',
   templateUrl: './pedidos.html',
   host: { class: 'block' },
