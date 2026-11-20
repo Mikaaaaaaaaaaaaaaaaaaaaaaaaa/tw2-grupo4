@@ -29,8 +29,8 @@
     font-size: 15px;
 }
 
-#precio_span {
-    font-size: 20px;
+.precio-fluido {
+    font-size: clamp(0.85rem, 6.2cqw, 1.125rem);
 }
 
 #catalogo_h1 {
@@ -47,4 +47,23 @@
 
 #limpiar_filtros_button {
     font-size: 17px;
+}
+
+:host-context(.dark) #buscador_input,
+:host-context(.dark) #ordenar_select,
+:host-context(.dark) #categoria_select,
+:host-context(.dark) #limite_por_pagina_select {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+:host-context(.dark) #buscador_input::placeholder {
+    color: #94a3b8 !important;
+}
+
+:host-context(.dark) #precio_span,
+:host-context(.dark) #sin_resultados_div,
+:host-context(.dark) #limpiar_filtros_button {
+    color: #f1f5f9;
 }

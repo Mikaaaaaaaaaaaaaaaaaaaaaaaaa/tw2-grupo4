@@ -15,6 +15,70 @@
   font-family: var(--nav-font-family);
 }
 
+:host-context(.dark) .nav {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .brand-name,
+:host-context(.dark) .sesion-nombre,
+:host-context(.dark) .nav-link,
+:host-context(.dark) .nav-link .nav-icon {
+  color: #e2e8f0;
+}
+
+:host-context(.dark) .nav-link:hover {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+:host-context(.dark) .nav-link--active {
+  background: rgba(99, 102, 241, 0.2) !important;
+  color: #a5b4fc !important;
+}
+
+:host-context(.dark) .sesion-btn.secundario {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+:host-context(.dark) .sesion-btn.secundario:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+:host-context(.dark) .brand-name,
+:host-context(.dark) .sesion-nombre {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .nav-link,
+:host-context(.dark) .nav-link .nav-icon {
+  color: #e2e8f0;
+}
+
+:host-context(.dark) .nav-link:hover {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+:host-context(.dark) .nav-link--active {
+  background-color: rgba(99, 102, 241, 0.2) !important;
+  color: #a5b4fc !important;
+}
+
+:host-context(.dark) .sesion-btn.secundario {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+:host-context(.dark) .sesion-btn.secundario:hover {
+  background-color: #334155;
+  color: #ffffff;
+}
+
 /* NAVBAR */
 
 .nav {
@@ -331,6 +395,44 @@
 
 .sesion-btn.secundario:hover {
   background-color: #e0e7ff;
+}
+
+.sesion-btn.secundario:has(.fa-sun),
+.sesion-btn.secundario:has(.fa-moon) {
+  min-width: 40px;
+  padding: 0 10px;
+}
+
+:host-context(.dark) .nav {
+  background-color: #0f172a;
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .container-logo,
+:host-context(.dark) .nav-link,
+:host-context(.dark) .sesion-nombre,
+:host-context(.dark) .nav-icon {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .nav-link:hover,
+:host-context(.dark) .nav-link.nav-link--active {
+  color: #a5b4fc !important;
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+:host-context(.dark) .sesion {
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .sesion-btn.secundario {
+  color: #c7d2fe;
+  background-color: #1e293b;
+}
+
+:host-context(.dark) .sesion-btn.secundario:hover {
+  background-color: #334155;
 }
 
 @media (max-width: 760px) {

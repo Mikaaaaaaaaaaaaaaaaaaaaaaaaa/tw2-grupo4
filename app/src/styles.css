@@ -4,6 +4,45 @@ html {
   scrollbar-gutter: stable;
 }
 
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
+  background-attachment: fixed;
+  color: #0f172a;
+  transition: background 0.25s ease, color 0.2s ease;
+}
+
+html.dark body {
+  background: linear-gradient(135deg, #020617 0%, #0f172a 55%, #1e1b4b 100%);
+  background-attachment: fixed;
+  color: #f1f5f9;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark select,
+html.dark option {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
 html, body, button, input, select, textarea {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }

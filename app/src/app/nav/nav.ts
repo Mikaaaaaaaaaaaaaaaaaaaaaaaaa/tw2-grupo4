@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Carrito } from '../carrito/carrito';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LoginService } from '../services/login';
+import { TemaService } from '../services/tema';
 import { Login } from '../components/login/login';
 @Component({
   imports: [Carrito, RouterLink, RouterLinkActive, Login],
@@ -11,6 +12,7 @@ import { Login } from '../components/login/login';
 })
 export class Nav {
   protected readonly login = inject(LoginService);
+  protected readonly tema = inject(TemaService);
 
   private router = inject(Router);
 

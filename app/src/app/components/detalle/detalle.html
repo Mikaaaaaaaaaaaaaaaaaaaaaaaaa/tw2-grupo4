@@ -1,8 +1,8 @@
-<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4" routerLink="/">
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-slate-950/70 backdrop-blur-sm p-4" routerLink="/">
 
-  <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 sm:p-8" (click)="$event.stopPropagation()">
+  <div class="relative bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl p-6 sm:p-8" (click)="$event.stopPropagation()">
 
-    <a routerLink="/" aria-label="Cerrar" class="absolute top-5 right-6 text-slate-400 hover:text-slate-600 transition-colors">
+    <a routerLink="/" aria-label="Cerrar" class="absolute top-5 right-6 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
       <i class="fa-solid fa-xmark text-xl"></i>
     </a>
 
@@ -13,15 +13,15 @@
              class="w-full sm:w-72 aspect-square object-cover rounded-2xl shrink-0">
 
         <div class="flex flex-col justify-center flex-1 space-y-3 pt-4 sm:pt-6">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">{{ prod.categoria }}</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-300">{{ prod.categoria }}</span>
 
-          <h2 class="text-2xl font-extrabold text-slate-900 leading-tight">{{ prod.nombre }}</h2>
+      <h2 class="text-2xl font-extrabold text-slate-900 dark:text-slate-100 leading-tight">{{ prod.nombre }}</h2>
 
-          <p class="text-sm text-slate-500 leading-relaxed">{{ prod.descripcion }}</p>
+          <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{{ prod.descripcion }}</p>
 
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
-            <span class="text-xs text-slate-400 block">Precio final</span>
-            <span class="text-3xl font-extrabold text-slate-900">${{ prod.precio.toFixed(2) }}</span>
+          <div class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+            <span class="text-xs text-slate-400 dark:text-slate-400 block">Precio final</span>
+            <span class="text-3xl font-extrabold text-slate-900 dark:text-slate-100">${{ prod.precio.toFixed(2) }}</span>
 
             @if (prod.stock === 0) {
               <p class="mt-2 text-xs font-semibold text-red-600">Sin stock</p>

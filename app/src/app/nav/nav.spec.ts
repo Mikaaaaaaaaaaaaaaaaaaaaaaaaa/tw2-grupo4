@@ -24,11 +24,11 @@ describe('Nav', () => {
 
   it('opens the login modal when a guest selects sign in', () => {
     const loginService = TestBed.inject(LoginService);
-    const button = (fixture.nativeElement as HTMLElement).querySelector(
-      '.sesion-btn',
-    ) as HTMLButtonElement;
+    const button = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('.sesion-btn'),
+    ).find((element) => element.textContent?.includes('Iniciar sesión'));
 
-    button.click();
+    button?.click();
     fixture.detectChanges();
 
     expect(loginService.modalLoginAbierto()).toBe(true);
