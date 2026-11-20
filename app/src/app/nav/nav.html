@@ -73,6 +73,6 @@
   
 </nav>
 
-@if (mostrarLogin) {
+@if (login.modalLoginAbierto()) {
   <app-login (cerrar)="cerrarLogin()" (autenticado)="alAutenticar()"></app-login>
 }

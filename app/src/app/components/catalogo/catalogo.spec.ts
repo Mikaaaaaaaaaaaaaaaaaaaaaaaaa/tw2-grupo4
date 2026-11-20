@@ -6,6 +6,8 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { Catalogo } from './catalogo';
+import { LoginService } from '../../services/login';
+import { CarritoService } from '../../services/carrito';
 
 describe('Catalogo', () => {
   let component: Catalogo;
@@ -27,17 +29,23 @@ describe('Catalogo', () => {
     component = fixture.componentInstance;
 
     fixture.detectChanges();
-    httpMock.expectOne((req) => req.url.endsWith('/products')).flush([
-      {
-        id: 1,
-        title: 'MacBook Air M2',
-        description: 'Notebook',
-        category: 'Laptops',
-        price: 1399.99,
-        stock: 5,
-        rating: 4.8,
-      },
-    ]);
+    httpMock.expectOne((req) => req.url.endsWith('/products')).flush({
+      data: [
+        {
+          id: 1,
+          title: 'MacBook Air M2',
+          description: 'Notebook',
+          category: 'Laptops',
+          price: 1399.99,
+          stock: 5,
+          rating: 4.8,
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 25,
+      totalPages: 1,
+    });
     await fixture.whenStable();
   });
 
@@ -50,10 +58,18 @@ describe('Catalogo', () => {
   });
 
   it('debe mostrar todos los productos al iniciar con el filtro Todas', () => {
-    component.ngOnInit();
-
     expect(component.categoriaActiva).toBe('Todos');
     expect(component.productosFiltrados).toEqual(component.productos);
     expect(component.productosFiltrados.length).toBeGreaterThan(0);
+  });
+
+  it('agrega el producto y solicita iniciar sesión cuando compra un invitado', () => {
+    const loginService = TestBed.inject(LoginService);
+    const carritoService = TestBed.inject(CarritoService);
+
+    component.agregarAlCarritoDeCompras(component.productosFiltrados[0]);
+
+    expect(carritoService.cantidadTotal()).toBe(1);
+    expect(loginService.modalLoginAbierto()).toBe(true);
   });
 });

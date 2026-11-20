@@ -21,6 +21,16 @@ export class LoginService {
   private readonly usuarioSignal = signal<Usuario | null>(this.cargar());
   readonly usuario = this.usuarioSignal.asReadonly();
   readonly esAdmin = computed(() => this.usuarioSignal()?.role === 'ADMIN');
+  private readonly modalLoginSignal = signal(false);
+  readonly modalLoginAbierto = this.modalLoginSignal.asReadonly();
+
+  abrirModalLogin(): void {
+    this.modalLoginSignal.set(true);
+  }
+
+  cerrarModalLogin(): void {
+    this.modalLoginSignal.set(false);
+  }
 
   login(email: string, password: string) {
     return this.http

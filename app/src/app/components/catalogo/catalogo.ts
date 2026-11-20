@@ -4,13 +4,12 @@ import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Login } from '../login/login';
 import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 
 @Component({
-  imports: [FormsModule, CommonModule, RouterModule, Login, Nav],
+  imports: [FormsModule, CommonModule, RouterModule, Nav],
   selector: 'app-catalogo',
   styleUrl: './catalogo.css',
   templateUrl: './catalogo.html',
@@ -18,7 +17,6 @@ import { LoginService } from '../../services/login';
 export class Catalogo implements OnInit {
   public productos: Product[] = [];
   public productosFiltrados: Product[] = [];
-  public mostrarLogin: boolean = false;
   public get usuarioActual(): string | null {
     return this.loginService.usuario()?.nombre ?? null;
   }
@@ -77,22 +75,8 @@ export class Catalogo implements OnInit {
     });
   }
 
-  public abrirLogin(): void {
-    this.mostrarLogin = true;
-  }
-
-  public cerrarLogin(): void {
-    this.mostrarLogin = false;
-  }
-
-  public alAutenticar(nombre: string): void {
-    this.mostrarLogin = false;
-    this.mostrarToast(`¡Hola, ${nombre}!`);
-  }
-
   public cerrarSesion(): void {
     this.loginService.logout();
-    this.mostrarLogin = false;
     this.mostrarToast('Sesión cerrada correctamente.');
   }
 
@@ -134,6 +118,9 @@ setTimeout(() => {
       return;
     }
     this.mostrarToast(`Se ha agregado "${producto.nombre}" al carrito de compras.`);
+    if (!this.loginService.token) {
+      this.loginService.abrirModalLogin();
+    }
   }
 
   public cantidadEnCarrito(productoId: number): number {
