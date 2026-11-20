@@ -5,7 +5,6 @@ import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 import { CATEGORIAS, type Categoria } from '../../models/categorias.const';
@@ -78,47 +77,30 @@ export class Catalogo implements OnInit {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
     this.paginaActual = 1;
-
-  public cargarDesdeBackend(): void {
-    this.productoService.cargarProductos(true, {
-      page: this.paginaActual,
-       limit: this.limitePorPagina,
-      ...(this.categoriaActiva !== 'Todos'
-        ? {
-            category:
-              this.categoriaActiva === 'Perifericos'
-                ? 'Periféricos'
-                : this.categoriaActiva,
-          }
-        : {}),
-      ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
-      sort: this.orden,
-    }).subscribe({
-   next: (lista) => {
-     this.productos = lista;
-     this.productosFiltrados = lista;
-     const paginacion = this.productoService.paginacion();
-     this.paginaActual = paginacion.page;
-     this.totalPaginas = paginacion.totalPages;
-     this.cdr.markForCheck();
-   },
-      error: () => {
-        this.mostrarToast('No se pudieron cargar los productos del servidor.');
-      },
-    });
-
     this.cargarDesdeBackend();
   }
 
   public cargarDesdeBackend(): void {
-    this.solicitudesCatalogo.next({
+    this.productoService.cargarProductos(true, {
       page: this.paginaActual,
-      limit: 25,
+      limit: this.limitePorPagina,
       ...(this.categoriaActiva !== 'Todos'
         ? { category: this.categoriaActiva }
         : {}),
       ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
       sort: this.orden,
+    }).subscribe({
+      next: (lista) => {
+        this.productos = lista;
+        this.productosFiltrados = lista;
+        const paginacion = this.productoService.paginacion();
+        this.paginaActual = paginacion.page;
+        this.totalPaginas = paginacion.totalPages;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.mostrarToast('No se pudieron cargar los productos del servidor.');
+      },
     });
   }
 
