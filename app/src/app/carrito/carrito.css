@@ -12,6 +12,96 @@
   font-size: 14px;
 }
 
+:host-context(.dark) .cart-panel,
+:host-context(.dark) .cart-content,
+:host-context(.dark) .cart-product {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .cart-header h2,
+:host-context(.dark) .close-button,
+:host-context(.dark) .empty-cart p,
+:host-context(.dark) .empty-cart span,
+:host-context(.dark) .cart-product-heading h3,
+:host-context(.dark) .cart-line-total,
+:host-context(.dark) .summary-row span,
+:host-context(.dark) .summary-row strong,
+:host-context(.dark) .summary-total,
+:host-context(.dark) .summary-total span,
+:host-context(.dark) .cart-product-price {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .cart-product-price,
+:host-context(.dark) .empty-cart p {
+  color: #94a3b8;
+}
+
+:host-context(.dark) .quantity-control {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+:host-context(.dark) .quantity-control button,
+:host-context(.dark) .quantity-control span {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .quantity-control button:hover {
+  background: #1e293b;
+}
+
+:host-context(.dark) .cart-footer {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .cart-trigger {
+  color: #e2e8f0;
+  background-color: transparent;
+}
+
+:host-context(.dark) .cart-trigger svg {
+  color: #e2e8f0;
+}
+
+:host-context(.dark) .cart-trigger:hover {
+  background-color: #1e293b;
+  color: #ffffff;
+}
+
+:host-context(.dark) .cart-trigger:hover svg {
+  color: #ffffff;
+}
+
+:host-context(.dark) .cart-panel {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .cart-footer {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .empty-icon {
+  background: #1e293b;
+  color: #94a3b8;
+}
+
+:host-context(.dark) .summary-row,
+:host-context(.dark) .summary-total span,
+:host-context(.dark) .summary-row strong {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .summary-total,
+:host-context(.dark) .cart-item {
+  border-color: #1e293b;
+}
+
 /* Botón que abre el carrito */
 
 .cart-trigger {

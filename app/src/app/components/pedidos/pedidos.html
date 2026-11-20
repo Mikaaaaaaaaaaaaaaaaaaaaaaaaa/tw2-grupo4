@@ -1,8 +1,8 @@
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-  <header class="flex flex-col gap-2 pb-4 border-b border-slate-200 sm:flex-row sm:items-center sm:justify-between">
+  <header class="flex flex-col gap-2 pb-4 border-b border-slate-200 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
     <div>
-      <h1 id="pedidos_h1" class="text-2xl font-bold text-slate-900">Resumen de Compras Realizadas</h1>
-      <p id="pedidos_p" class="text-sm text-slate-500">Revisá el detalle de todos tus pedidos.</p>
+      <h1 id="pedidos_h1" class="text-2xl font-bold text-slate-900 dark:text-slate-100">Resumen de Compras Realizadas</h1>
+      <p id="pedidos_p" class="text-sm text-slate-500 dark:text-slate-400">Revisá el detalle de todos tus pedidos.</p>
     </div>
 
     <a id="volver_catalogo_a" routerLink="/catalogo" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800">
@@ -12,18 +12,18 @@
   </header>
 
   @if (cargando()) {
-    <p id="cargando_p" class="text-center text-slate-500 py-10">Cargando tus pedidos...</p>
+    <p id="cargando_p" class="text-center text-slate-500 dark:text-slate-400 py-10">Cargando tus pedidos...</p>
   } @else if (error(); as mensaje) {
     <p id="error_p" class="text-center text-red-600 py-10" role="alert">{{ mensaje }}</p>
   } @else if (pedidos().length === 0) {
-    <div id="sin_pedidos_div" class="mt-6 mx-auto max-w-md flex flex-col items-center space-y-3 p-8 text-center bg-white border border-slate-200 rounded-xl">
+    <div id="sin_pedidos_div" class="mt-6 mx-auto max-w-md flex flex-col items-center space-y-3 p-8 text-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
       <div class="flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 text-indigo-600 text-2xl">
         <i class="fa-solid fa-box-open" aria-hidden="true"></i>
       </div>
 
-      <h2 class="text-lg font-bold text-slate-800">No has realizado compras aún</h2>
+      <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">No has realizado compras aún</h2>
 
-      <p class="text-sm text-slate-500">
+      <p class="text-sm text-slate-500 dark:text-slate-400">
         Agrega productos al carrito y finaliza la compra para generar tu primer pedido.
       </p>
 
@@ -34,17 +34,17 @@
   } @else {
     <ul id="lista_pedidos_ul" class="mt-6 space-y-4">
       @for (pedido of pedidos(); track pedido.id) {
-        <li class="overflow-hidden bg-white border border-slate-200 rounded-xl">
-          <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-bold text-slate-800">Pedido #{{ pedido.orderNumber ?? pedido.id }}</h2>
-            <span class="text-sm text-slate-500">{{ pedido.date | date: 'dd/MM/yyyy' }}</span>
+        <li class="overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl">
+          <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-200 dark:border-slate-800">
+            <h2 class="text-lg font-bold text-slate-800 dark:text-slate-100">Pedido #{{ pedido.orderNumber ?? pedido.id }}</h2>
+            <span class="text-sm text-slate-500 dark:text-slate-400">{{ pedido.date | date: 'dd/MM/yyyy' }}</span>
           </div>
 
-          <ul class="px-6 divide-y divide-slate-100">
+          <ul class="px-6 divide-y divide-slate-100 dark:divide-slate-800">
             @for (item of pedido.items; track item.productId) {
               <li class="flex items-center justify-between gap-4 py-3 text-sm">
                 <div>
-                  <span class="text-slate-700">{{ item.productName }}</span>
+                  <span class="text-slate-700 dark:text-slate-300">{{ item.productName }}</span>
                   <span class="block text-xs text-slate-400">{{ item.quantity }} × ${{ item.unitPrice | number: '1.2-2' }}</span>
                 </div>
                 <span class="font-semibold text-slate-900">${{ item.unitPrice * item.quantity | number: '1.2-2' }}</span>
@@ -52,9 +52,9 @@
             }
           </ul>
 
-          <div class="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-200">
-            <span class="text-sm font-semibold text-slate-500">Total (IVA 21% incluido)</span>
-            <span class="text-lg font-bold text-slate-900">${{ pedido.total | number: '1.2-2' }}</span>
+          <div class="flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+            <span class="text-sm font-semibold text-slate-500 dark:text-slate-400">Total (IVA 21% incluido)</span>
+            <span class="text-lg font-bold text-slate-900 dark:text-slate-100">${{ pedido.total | number: '1.2-2' }}</span>
           </div>
         </li>
       }

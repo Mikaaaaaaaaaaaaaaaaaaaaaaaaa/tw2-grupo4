@@ -4,6 +4,127 @@
   padding: 0 1rem;
 }
 
+:host-context(.dark) .checkout-container,
+:host-context(.dark) .invoice-container {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .checkout-header h1,
+:host-context(.dark) .card,
+:host-context(.dark) .card h2,
+:host-context(.dark) .buyer-info p,
+:host-context(.dark) .form-field label,
+:host-context(.dark) .summary-items li,
+:host-context(.dark) .summary-totals .row,
+:host-context(.dark) .summary-totals .total {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .card {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+}
+
+:host-context(.dark) .radio-label,
+:host-context(.dark) .card-fields,
+:host-context(.dark) .form-field input {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .summary-items li,
+:host-context(.dark) .invoice-table td {
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .invoice {
+  background: #0f172a;
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .invoice-table,
+:host-context(.dark) .invoice-table th,
+:host-context(.dark) .invoice-table td {
+  color: #f1f5f9;
+  border-color: #1e293b;
+}
+
+:host-context(.dark) .invoice-table th {
+  background: #1e293b;
+}
+
+@media print {
+  .invoice,
+  .invoice-table,
+  .invoice-table th,
+  .invoice-table td {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border-color: #e5e7eb !important;
+  }
+}
+
+:host-context(.dark) .card,
+:host-context(.dark) .invoice {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .checkout-header,
+:host-context(.dark) .invoice-footer {
+  border-color: #1e293b;
+}
+
+:host-context(.dark) h2,
+:host-context(.dark) .info-row p,
+:host-context(.dark) .item-info,
+:host-context(.dark) .row,
+:host-context(.dark) .party p {
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .card-fields {
+  background: #1e293b;
+}
+
+:host-context(.dark) input[type="text"] {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .radio-label {
+  border-color: #334155;
+}
+
+:host-context(.dark) .invoice-table th {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+:host-context(.dark) .invoice-table td {
+  border-color: #1e293b;
+}
+
+@media print {
+  :host-context(.dark) .invoice,
+  :host-context(.dark) .invoice-table th {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  :host-context(.dark) .invoice h2,
+  :host-context(.dark) .invoice p,
+  :host-context(.dark) .invoice span,
+  :host-context(.dark) .invoice td,
+  :host-context(.dark) .invoice th {
+    color: #111827 !important;
+    border-color: #e5e7eb !important;
+  }
+}
+
 .checkout-header {
   margin-bottom: 2rem;
   border-bottom: 2px solid #eee;
