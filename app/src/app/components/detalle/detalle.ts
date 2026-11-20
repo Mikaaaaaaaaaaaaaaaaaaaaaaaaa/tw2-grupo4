@@ -59,15 +59,17 @@ export class Detalle implements OnInit, OnDestroy {
       return;
     }
 
+    if (!this.loginService.token) {
+      this.loginService.abrirModalLogin();
+      return;
+    }
+
     if (!this.carritoService.agregar(prod)) {
       this.mostrarFeedback('error', `No hay más stock disponible de "${prod.nombre}".`);
       return;
     }
 
     this.mostrarFeedback('ok', `Se agregó "${prod.nombre}" al carrito.`);
-    if (!this.loginService.token) {
-      this.loginService.abrirModalLogin();
-    }
   }
 
   private mostrarFeedback(tipo: 'ok' | 'error', texto: string): void {

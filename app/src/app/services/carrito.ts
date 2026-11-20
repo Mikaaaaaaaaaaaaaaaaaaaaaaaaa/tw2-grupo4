@@ -1,4 +1,4 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { effect, Injectable, computed, inject, signal } from '@angular/core';
 import { Product } from '../models/product';
 import { LoginService } from './login';
 
@@ -11,10 +11,14 @@ const CLAVE_STORAGE = 'techstore.carrito';
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService {
+  private readonly loginService = inject(LoginService);
   private readonly itemsSignal = signal<ItemCarrito[]>(this.cargar());
 
-  constructor(loginService: LoginService) {
-    loginService.sesionCerrada$.subscribe(() => this.vaciar());
+  constructor() {
+    effect(() => {
+      const usuario = this.loginService.usuario();
+      this.itemsSignal.set(usuario ? this.cargar(usuario.id) : []);
+    });
   }
 
   readonly items = this.itemsSignal.asReadonly();
@@ -90,12 +94,18 @@ export class CarritoService {
 
   vaciar(): void {
     this.itemsSignal.set([]);
-    localStorage.removeItem(CLAVE_STORAGE);
+    const usuario = this.loginService.usuario();
+    if (usuario) localStorage.removeItem(this.claveParaUsuario(usuario.id));
   }
 
-  private cargar(): ItemCarrito[] {
+  private cargar(usuarioId?: number): ItemCarrito[] {
+    localStorage.removeItem(CLAVE_STORAGE);
+    sessionStorage.removeItem(CLAVE_STORAGE);
+    const id = usuarioId ?? this.loginService.usuario()?.id;
+    if (id === undefined) return [];
+
     try {
-      const guardado = localStorage.getItem(CLAVE_STORAGE);
+      const guardado = localStorage.getItem(this.claveParaUsuario(id));
       if (!guardado) return [];
 
       const items = JSON.parse(guardado) as ItemCarrito[];
@@ -115,10 +125,17 @@ export class CarritoService {
   }
 
   private guardar(): void {
+    const usuario = this.loginService.usuario();
+    if (!usuario) return;
+
     try {
-      localStorage.setItem(CLAVE_STORAGE, JSON.stringify(this.itemsSignal()));
+      localStorage.setItem(this.claveParaUsuario(usuario.id), JSON.stringify(this.itemsSignal()));
     } catch {
       
     }
+  }
+
+  private claveParaUsuario(usuarioId: number): string {
+    return `${CLAVE_STORAGE}.${usuarioId}`;
   }
 }

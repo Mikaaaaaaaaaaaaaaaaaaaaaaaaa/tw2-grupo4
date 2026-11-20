@@ -186,14 +186,16 @@ setTimeout(() => {
   }
 
   public agregarAlCarritoDeCompras(producto: Product): void {
+    if (!this.loginService.token) {
+      this.loginService.abrirModalLogin();
+      return;
+    }
+
     if (!this.carritoService.agregar(producto)) {
       this.mostrarToast(`No hay más stock disponible de "${producto.nombre}".`);
       return;
     }
     this.mostrarToast(`Se ha agregado "${producto.nombre}" al carrito de compras.`);
-    if (!this.loginService.token) {
-      this.loginService.abrirModalLogin();
-    }
   }
 
   public cantidadEnCarrito(productoId: number): number {
