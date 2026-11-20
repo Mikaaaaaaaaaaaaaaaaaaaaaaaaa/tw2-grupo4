@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Subject, switchMap } from 'rxjs';
 import { Product } from '../../models/product';
 import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +32,13 @@ export class Catalogo implements OnInit {
   public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
   public paginaActual = 1;
   public totalPaginas = 0;
+  private readonly solicitudesCatalogo = new Subject<{
+    page: number;
+    limit: number;
+    category?: string;
+    search?: string;
+    sort: 'destacados' | 'precio-menor' | 'precio-mayor';
+  }>();
 
   public mensajeToast: string | null = null;
 
@@ -44,11 +52,29 @@ export class Catalogo implements OnInit {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
     this.paginaActual = 1;
+
+    this.solicitudesCatalogo.pipe(
+      switchMap((parametros) =>
+        this.productoService.cargarProductos(true, parametros),
+      ),
+    ).subscribe({
+      next: (lista) => {
+        this.productos = lista;
+        this.productosFiltrados = lista;
+        const paginacion = this.productoService.paginacion();
+        this.paginaActual = paginacion.page;
+        this.totalPaginas = paginacion.totalPages;
+      },
+      error: () => {
+        this.mostrarToast('No se pudieron cargar los productos del servidor.');
+      },
+    });
+
     this.cargarDesdeBackend();
   }
 
   public cargarDesdeBackend(): void {
-    this.productoService.cargarProductos(true, {
+    this.solicitudesCatalogo.next({
       page: this.paginaActual,
       limit: 25,
       ...(this.categoriaActiva !== 'Todos'
@@ -61,17 +87,6 @@ export class Catalogo implements OnInit {
         : {}),
       ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
       sort: this.orden,
-    }).subscribe({
-      next: (lista) => {
-        this.productos = lista;
-        this.productosFiltrados = lista;
-        const paginacion = this.productoService.paginacion();
-        this.paginaActual = paginacion.page;
-        this.totalPaginas = paginacion.totalPages;
-      },
-      error: () => {
-        this.mostrarToast('No se pudieron cargar los productos del servidor.');
-      },
     });
   }
 
