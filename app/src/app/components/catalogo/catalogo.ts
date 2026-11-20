@@ -28,7 +28,7 @@ export class Catalogo implements OnInit {
   public readonly categorias = CATEGORIAS;
   public categoriaActiva: Categoria | 'Todos' = 'Todos';
   public busqueda: string = '';
-  public orden: 'precio-menor' | 'precio-mayor' = 'precio-mayor';
+  public orden: '' | 'precio-menor' | 'precio-mayor' = '';
   public limitePorPagina: 12 | 24 = 12;
   public paginaActual = 1;
   public totalPaginas = 0;
@@ -42,7 +42,7 @@ export class Catalogo implements OnInit {
   public get hayFiltrosActivos(): boolean {
     return this.categoriaActiva !== 'Todos'
       || this.busqueda.trim() !== ''
-      || this.orden !== 'precio-mayor';
+      || this.orden !== '';
   }
 
   public get cargandoProductos(): boolean {
@@ -104,7 +104,7 @@ export class Catalogo implements OnInit {
         ? { category: this.categoriaActiva }
         : {}),
       ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
-      sort: this.orden,
+      ...(this.orden ? { sort: this.orden } : {}),
     }).subscribe({
       next: (lista) => {
         this.productos = lista;
@@ -128,8 +128,7 @@ export class Catalogo implements OnInit {
   public resetearFiltros(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
-    this.busquedaAplicada = '';
-    this.orden = 'precio-mayor';
+    this.orden = '';
     this.limitePorPagina = 12;
     this.paginaActual = 1;
     this.cargarDesdeBackend();
