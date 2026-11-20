@@ -1,6 +1,7 @@
 import { 
   crear as crearProductoEnRepositorio,
   listar as listarProductosEnRepositorio,
+  obtenerPorId as obtenerProductoPorIdEnRepositorio,
   type FiltrosProductos,
 } from "../repositories/producto";
 
@@ -80,5 +81,24 @@ export async function listarProductos(filtros: FiltrosProductos) {
     page: filtros.page,
     limit: filtros.limit,
     totalPages: Math.ceil(total / filtros.limit),
+    };
+}
+
+export async function obtenerProductoPorId(id: number) {
+  if (Number.isInteger(id) == false || id <= 0) {
+    return { error: "El ID es inválido."}
+  }
+
+  const producto = await obtenerProductoPorIdEnRepositorio(id);
+  if (!producto) {
+    return { error: "Producto no encontrado." };
+  }
+
+  const rating = producto.rating !== null ? Number(producto.rating) : null;
+
+  return {
+    ...producto,
+    price: Number(producto.price),
+    rating,
   };
 }
