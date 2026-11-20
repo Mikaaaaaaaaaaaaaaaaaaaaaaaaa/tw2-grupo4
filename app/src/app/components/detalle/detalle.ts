@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProductoService } from '../../services/producto';
 import { Product } from '../../models/product';
@@ -11,29 +11,65 @@ import { LoginService } from '../../services/login';
   styleUrl: './detalle.css',
   templateUrl: './detalle.html',
 })
-export class Detalle implements OnInit {
+export class Detalle implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private productoService = inject(ProductoService);
   private carritoService = inject(CarritoService);
   private loginService = inject(LoginService);
 
   protected readonly esAdmin = this.loginService.esAdmin;
+  protected readonly feedback = signal<{ tipo: 'ok' | 'error'; texto: string } | null>(null);
+  private feedbackTimer?: ReturnType<typeof setTimeout>;
 
-  producto?: Product;
+  readonly producto = signal<Product | undefined>(undefined);
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.productoService.obtenerPorId$(id).subscribe((prod) => {
-      this.producto = prod;
+      this.producto.set(prod);
     });
   }
 
+  ngOnDestroy(): void {
+    clearTimeout(this.feedbackTimer);
+  }
+
+  cantidadEnCarrito(): number {
+    const prod = this.producto();
+    if (!prod) return 0;
+    return (
+      this.carritoService.items().find((item) => item.producto.id === prod.id)?.cantidad ?? 0
+    );
+  }
+
+  stockDisponible(): number {
+    const prod = this.producto();
+    if (!prod) return 0;
+    return Math.max(0, prod.stock - this.cantidadEnCarrito());
+  }
+
+  puedeAgregar(): boolean {
+    return this.stockDisponible() > 0;
+  }
+
   agregarAlCarrito(): void {
+    const prod = this.producto();
     // El admin no compra, aunque el botón no se muestre
-    if (this.esAdmin() || !this.producto) {
+    if (this.esAdmin() || !prod) {
       return;
     }
 
-    this.carritoService.agregar(this.producto);
+    if (!this.carritoService.agregar(prod)) {
+      this.mostrarFeedback('error', `No hay más stock disponible de "${prod.nombre}".`);
+      return;
+    }
+
+    this.mostrarFeedback('ok', `Se agregó "${prod.nombre}" al carrito.`);
+  }
+
+  private mostrarFeedback(tipo: 'ok' | 'error', texto: string): void {
+    this.feedback.set({ tipo, texto });
+    clearTimeout(this.feedbackTimer);
+    this.feedbackTimer = setTimeout(() => this.feedback.set(null), 3000);
   }
 }

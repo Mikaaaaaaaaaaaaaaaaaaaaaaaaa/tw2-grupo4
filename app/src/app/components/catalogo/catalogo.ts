@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { Product } from '../../models/product';
 import { ProductoService } from '../../services/producto';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +31,7 @@ export class Catalogo implements OnInit {
   public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
   public paginaActual = 1;
   public totalPaginas = 0;
+  private readonly cdr = inject(ChangeDetectorRef);
 
   public mensajeToast: string | null = null;
 
@@ -62,13 +63,14 @@ export class Catalogo implements OnInit {
       ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
       sort: this.orden,
     }).subscribe({
-      next: (lista) => {
-        this.productos = lista;
-        this.productosFiltrados = lista;
-        const paginacion = this.productoService.paginacion();
-        this.paginaActual = paginacion.page;
-        this.totalPaginas = paginacion.totalPages;
-      },
+   next: (lista) => {
+     this.productos = lista;
+     this.productosFiltrados = lista;
+     const paginacion = this.productoService.paginacion();
+     this.paginaActual = paginacion.page;
+     this.totalPaginas = paginacion.totalPages;
+     this.cdr.markForCheck();
+   },
       error: () => {
         this.mostrarToast('No se pudieron cargar los productos del servidor.');
       },
@@ -120,9 +122,10 @@ export class Catalogo implements OnInit {
   public mostrarToast(mensaje: string): void {
     this.mensajeToast = mensaje;
 
-    setTimeout(() => {
-      this.mensajeToast = null;
-    }, 3000);
+setTimeout(() => {
+  this.mensajeToast = null;
+  this.cdr.markForCheck();
+}, 3000);
   }
 
   public agregarAlCarritoDeCompras(producto: Product): void {

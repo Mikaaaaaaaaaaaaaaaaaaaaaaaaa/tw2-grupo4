@@ -36,7 +36,7 @@
       @for (pedido of pedidos(); track pedido.id) {
         <li class="overflow-hidden bg-white border border-slate-200 rounded-xl">
           <div class="flex items-center justify-between gap-4 px-6 py-4 border-b border-slate-200">
-            <h2 class="text-lg font-bold text-slate-800">Pedido #{{ pedido.id }}</h2>
+            <h2 class="text-lg font-bold text-slate-800">Pedido #{{ pedido.orderNumber ?? pedido.id }}</h2>
             <span class="text-sm text-slate-500">{{ pedido.date | date: 'dd/MM/yyyy' }}</span>
           </div>
 

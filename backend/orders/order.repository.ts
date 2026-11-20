@@ -35,7 +35,7 @@ export function createOrder(userId: number, items: ItemInput[]) {
       lines.push({ product_id: productId, quantity, unit_price: unitPrice });
     }
 
-    return tx.orders.create({
+const order = await tx.orders.create({
       data: {
         user_id: userId,
         total: totalConIva(lines.map(({ unit_price, quantity }) => ({ unitPrice: unit_price, quantity }))),
@@ -43,6 +43,10 @@ export function createOrder(userId: number, items: ItemInput[]) {
       },
       include: orderInclude,
     });
+
+    const orderNumber = await tx.orders.count({ where: { user_id: userId } });
+
+    return { order, orderNumber };
   });
 }
 

@@ -2,9 +2,10 @@ import { HttpError } from "../common/errors";
 import { createOrder, findOrdersByUser, type ItemInput, type OrderRow } from "./order.repository";
 import { totalConIva } from "./order.precios";
 
-function toDto(o: OrderRow) {
+function toDto(o: OrderRow, orderNumber: number) {
   return {
     id: o.id,
+    orderNumber,
     userId: o.user_id,
     total: totalConIva(o.order_items.map((i) => ({
       unitPrice: Number(i.unit_price),
@@ -19,7 +20,6 @@ function toDto(o: OrderRow) {
     })),
   };
 }
-
 function parseItems(body: unknown): ItemInput[] {
   const raw = (body as { items?: unknown } | undefined)?.items;
   if (!Array.isArray(raw) || raw.length === 0) {
@@ -42,9 +42,11 @@ function parseItems(body: unknown): ItemInput[] {
 }
 
 export async function crear(userId: number, body: unknown) {
-  return toDto(await createOrder(userId, parseItems(body)));
+  const { order, orderNumber } = await createOrder(userId, parseItems(body));
+  return toDto(order, orderNumber);
 }
 
 export async function listar(userId: number) {
-  return (await findOrdersByUser(userId)).map(toDto);
+  const orders = await findOrdersByUser(userId);
+  return orders.map((order, index) => toDto(order, orders.length - index));
 }
