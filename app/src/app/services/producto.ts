@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
 import { Product } from '../models/product';
@@ -17,6 +17,22 @@ export interface ProductoApiDto {
   image?: string | null;
 }
 
+export interface ParametrosProductos {
+  page?: number;
+  limit?: number;
+  category?: string;
+  search?: string;
+  sort?: 'destacados' | 'precio-menor' | 'precio-mayor';
+}
+
+export interface RespuestaPaginadaApiDto {
+  data: ProductoApiDto[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 const IMAGEN_POR_DEFECTO =
   'https://images.unsplash.com/photo-1518770660439-4636190af475?w=500&auto=format&fit=crop&q=60';
 
@@ -29,24 +45,54 @@ export class ProductoService {
   readonly productos = signal<Product[]>([]);
   readonly cargando = signal<boolean>(false);
   readonly error = signal<string | null>(null);
+  readonly paginacion = signal({
+    total: 0,
+    page: 1,
+    limit: 25,
+    totalPages: 0,
+  });
 
   /**
    * Pide todos los productos al backend (GET /api/products)
    */
-  public cargarProductos(forzarRecarga = false): Observable<Product[]> {
-    if (!forzarRecarga && this.productos().length > 0) {
+  public cargarProductos(
+    forzarRecarga = false,
+    parametros: ParametrosProductos = {},
+  ): Observable<Product[]> {
+    const hayParametros = Object.keys(parametros).length > 0;
+
+    if (!forzarRecarga && !hayParametros && this.productos().length > 0) {
       return of(this.productos());
     }
 
     this.cargando.set(true);
     this.error.set(null);
 
-    return this.http.get<ProductoApiDto[]>(this.apiUrl).pipe(
-      map((listaApi) => listaApi.map((item) => this.traducirDesdeApi(item))),
-      tap((listaTraducida) => {
-        this.productos.set(listaTraducida);
+    let params = new HttpParams();
+    if (parametros.page !== undefined) params = params.set('page', parametros.page);
+    if (parametros.limit !== undefined) params = params.set('limit', parametros.limit);
+    if (parametros.category) params = params.set('category', parametros.category);
+    if (parametros.search) params = params.set('search', parametros.search);
+    if (parametros.sort) params = params.set('sort', parametros.sort);
+
+    return this.http.get<RespuestaPaginadaApiDto>(this.apiUrl, { params }).pipe(
+      map((respuesta) => ({
+        productos: respuesta.data.map((item) =>
+          this.traducirDesdeApi(item),
+        ),
+        paginacion: {
+          total: respuesta.total,
+          page: respuesta.page,
+          limit: respuesta.limit,
+          totalPages: respuesta.totalPages,
+        },
+      })),
+      tap((resultado) => {
+        this.productos.set(resultado.productos);
+        this.paginacion.set(resultado.paginacion);
         this.cargando.set(false);
       }),
+      map((resultado) => resultado.productos),
       catchError((err: unknown) => {
         this.cargando.set(false);
         this.error.set('No se pudieron cargar los productos desde el servidor.');
@@ -85,7 +131,7 @@ export class ProductoService {
       description: producto.descripcion,
       category: producto.clasificacion,
       price: producto.precio,
-      stock: 10,
+      stock: producto.stock,
       ...(producto.imagen ? { image: producto.imagen } : {}),
     };
 

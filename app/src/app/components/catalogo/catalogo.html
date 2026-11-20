@@ -114,6 +114,26 @@
     </div>
   </ng-template>
 
+  @if (totalPaginas > 1) {
+    <nav class="flex justify-center items-center gap-3" aria-label="Paginación">
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg border border-slate-300 disabled:text-slate-400"
+        (click)="cambiarPagina(paginaActual - 1)"
+        [disabled]="paginaActual <= 1">
+        Anterior
+      </button>
+      <span class="text-sm text-slate-600">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+      <button
+        type="button"
+        class="px-3 py-2 rounded-lg border border-slate-300 disabled:text-slate-400"
+        (click)="cambiarPagina(paginaActual + 1)"
+        [disabled]="paginaActual >= totalPaginas">
+        Siguiente
+      </button>
+    </nav>
+  }
+
 </section>
 
 <!-- Toast flotante de confirmación. -->

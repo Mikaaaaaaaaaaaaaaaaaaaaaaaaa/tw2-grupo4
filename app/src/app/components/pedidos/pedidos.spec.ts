@@ -33,7 +33,7 @@ describe('Pedidos', () => {
 
   it('lista los pedidos mostrando el numero secuencial por usuario', async () => {
     http.expectOne(url).flush([{
-      id: 15, orderNumber: 1, userId: 2, total: 2799.98, date: '2026-10-03T12:00:00.000Z',
+id: 15, orderNumber: 1, userId: 2, total: 3387.98, date: '2026-10-03T12:00:00.000Z',
       items: [{ productId: 1, productName: 'Remera básica', quantity: 2, unitPrice: 1399.99 }],
     }]);
     await fixture.whenStable();
@@ -41,7 +41,8 @@ describe('Pedidos', () => {
     expect(lista).toContain('Pedido #1');
     expect(lista).not.toContain('Pedido #15');
     expect(lista).toContain('Remera básica');
-    expect(lista).toContain('2,799.98');
+    expect(lista).toContain('Total (IVA 21% incluido)');
+    expect(lista).toContain('3,387.98');
   });
 
   it('muestra el error si el backend falla', async () => {

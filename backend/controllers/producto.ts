@@ -5,38 +5,23 @@ import {
     listarProductos as listarProductosEnServicio,
     ErrorValidacion,
 } from "../services/producto";
+import { validarYNormalizarFiltrosProductos } from "../validations/productos-filtros";
 
 export async function listarProductos(
-    _req: Request,
+    req: Request,
     res: Response,
     next: NextFunction,
 ): Promise<void> {
     try {
-        // const productos = await prisma.products.findMany({
-        //     orderBy: { id: "asc" },
-        // });
+        const resultado = validarYNormalizarFiltrosProductos(req.query);
 
-        const { category, q } = _req.query;
+        if (!resultado.valido) {
+            res.status(400).json({ errores: resultado.errores });
+            return;
+        }
 
-        const filtros = {
-            ...(typeof category === "string" && category.trim() !== ""
-                ? { category: category.trim() }
-                : {}),
-            ...(typeof q === "string" && q.trim() !== ""
-                ? { q: q.trim() }
-                : {}),
-        };
-
-        const productos = await listarProductosEnServicio(filtros);
-
-        res.json(productos);
-        //     productos.map((p) => ({
-        //         ...p,
-        //         price: Number(p.price),
-        //         stock: p.stock,
-        //         rating: p.rating !== null ? Number(p.rating) : null,
-        //     })),
-        // );
+        const respuesta = await listarProductosEnServicio(resultado.filtros!);
+        res.json(respuesta);
     } catch (error) {
         next(error);
     }
