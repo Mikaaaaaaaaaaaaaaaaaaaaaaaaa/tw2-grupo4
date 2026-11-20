@@ -69,9 +69,10 @@ describe('Detalle', () => {
     expect(carritoService.cantidadTotal()).toBe(2);
   });
 
-  it('deshabilita el boton si el producto no tiene stock', () => {
-    component.producto = { ...component.producto!, stock: 0 };
+  it('deshabilita el boton si el producto no tiene stock', async () => {
+    component.producto.set({ ...component.producto()!, stock: 0 });
     fixture.detectChanges();
+    await fixture.whenStable();
 
     const boton = (fixture.nativeElement as HTMLElement).querySelector('button');
     expect(boton?.disabled).toBe(true);

@@ -21,12 +21,12 @@ export class Detalle implements OnInit, OnDestroy {
   protected readonly feedback = signal<{ tipo: 'ok' | 'error'; texto: string } | null>(null);
   private feedbackTimer?: ReturnType<typeof setTimeout>;
 
-  producto?: Product;
+  readonly producto = signal<Product | undefined>(undefined);
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.productoService.obtenerPorId$(id).subscribe((prod) => {
-      this.producto = prod;
+      this.producto.set(prod);
     });
   }
 
@@ -35,15 +35,17 @@ export class Detalle implements OnInit, OnDestroy {
   }
 
   cantidadEnCarrito(): number {
-    if (!this.producto) return 0;
+    const prod = this.producto();
+    if (!prod) return 0;
     return (
-      this.carritoService.items().find((item) => item.producto.id === this.producto!.id)?.cantidad ?? 0
+      this.carritoService.items().find((item) => item.producto.id === prod.id)?.cantidad ?? 0
     );
   }
 
   stockDisponible(): number {
-    if (!this.producto) return 0;
-    return Math.max(0, this.producto.stock - this.cantidadEnCarrito());
+    const prod = this.producto();
+    if (!prod) return 0;
+    return Math.max(0, prod.stock - this.cantidadEnCarrito());
   }
 
   puedeAgregar(): boolean {
@@ -51,17 +53,18 @@ export class Detalle implements OnInit, OnDestroy {
   }
 
   agregarAlCarrito(): void {
+    const prod = this.producto();
     // El admin no compra, aunque el botón no se muestre
-    if (this.esAdmin() || !this.producto) {
+    if (this.esAdmin() || !prod) {
       return;
     }
 
-    if (!this.carritoService.agregar(this.producto)) {
-      this.mostrarFeedback('error', `No hay más stock disponible de "${this.producto.nombre}".`);
+    if (!this.carritoService.agregar(prod)) {
+      this.mostrarFeedback('error', `No hay más stock disponible de "${prod.nombre}".`);
       return;
     }
 
-    this.mostrarFeedback('ok', `Se agregó "${this.producto.nombre}" al carrito.`);
+    this.mostrarFeedback('ok', `Se agregó "${prod.nombre}" al carrito.`);
   }
 
   private mostrarFeedback(tipo: 'ok' | 'error', texto: string): void {

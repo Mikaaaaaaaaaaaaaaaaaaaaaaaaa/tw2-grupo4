@@ -6,24 +6,24 @@
       <i class="fa-solid fa-xmark text-xl"></i>
     </a>
 
-    @if (producto) {
+    @if (producto(); as prod) {
       <div class="flex flex-col sm:flex-row gap-6">
 
-        <img [src]="producto.imagen" [alt]="producto.nombre"
+        <img [src]="prod.imagen" [alt]="prod.nombre"
              class="w-full sm:w-72 aspect-square object-cover rounded-2xl shrink-0">
 
         <div class="flex flex-col justify-center flex-1 space-y-3 pt-4 sm:pt-6">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">{{ producto.categoria }}</span>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">{{ prod.categoria }}</span>
 
-          <h2 class="text-2xl font-extrabold text-slate-900 leading-tight">{{ producto.nombre }}</h2>
+          <h2 class="text-2xl font-extrabold text-slate-900 leading-tight">{{ prod.nombre }}</h2>
 
-          <p class="text-sm text-slate-500 leading-relaxed">{{ producto.descripcion }}</p>
+          <p class="text-sm text-slate-500 leading-relaxed">{{ prod.descripcion }}</p>
 
-        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <span class="text-xs text-slate-400 block">Precio final</span>
-            <span class="text-3xl font-extrabold text-slate-900">${{ producto.precio.toFixed(2) }}</span>
+            <span class="text-3xl font-extrabold text-slate-900">${{ prod.precio.toFixed(2) }}</span>
 
-            @if (producto.stock === 0) {
+            @if (prod.stock === 0) {
               <p class="mt-2 text-xs font-semibold text-red-600">Sin stock</p>
             } @else if (stockDisponible() === 0) {
               <p class="mt-2 text-xs font-semibold text-amber-600">
@@ -44,7 +44,7 @@
               class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed disabled:shadow-none text-white font-bold text-sm rounded-xl py-3 shadow-lg shadow-indigo-500/30 active:scale-95 transition-all flex items-center justify-center gap-2"
             >
               <i class="fa-solid fa-cart-plus"></i>
-              {{ producto.stock === 0 ? 'Sin stock' : 'Agregar al Carrito' }}
+              {{ prod.stock === 0 ? 'Sin stock' : 'Agregar al Carrito' }}
             </button>
 
             @if (feedback(); as aviso) {
