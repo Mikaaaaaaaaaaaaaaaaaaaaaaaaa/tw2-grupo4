@@ -3,6 +3,7 @@ import { prisma } from "../config/db";
 import {
     crearProducto as crearProductoEnServicio,
     listarProductos as listarProductosEnServicio,
+    obtenerProductoPorId as obtenerProductoPorIdEnServicio,
     ErrorValidacion,
 } from "../services/producto";
 import { validarYNormalizarFiltrosProductos } from "../validations/productos-filtros";
@@ -34,29 +35,49 @@ export async function obtenerProductoPorId(
 ): Promise<void> {
     try {
         const id = Number(req.params.id);
-        if (!Number.isInteger(id) || id <= 0) {
-            res.status(400).json({ message: "ID inválido" });
-            return;
+
+        const resultado = await obtenerProductoPorIdEnServicio(id);
+
+        if ('error' in resultado) {
+            if (resultado.error === 'ID_INVALIDO') {
+                res.status(400).json({ message: "ID inválido" });
+                return;
+            }
+
+            if (resultado.error === 'PRODUCTO_NO_ENCONTRADO') {
+                res.status(404).json({ message: "Producto no encontrado" });
+                return;
+            }
         }
 
-        const producto = await prisma.products.findUnique({
-            where: { id },
-        });
-
-        if (!producto) {
-            res.status(404).json({ message: "Producto no encontrado" });
-            return;
-        }
-
-        res.json({
-            ...producto,
-            price: Number(producto.price),
-            stock: producto.stock,
-            rating: producto.rating !== null ? Number(producto.rating) : null,
-        });
-    } catch (error) {
+        res.json(resultado);
+        } catch (error) {
         next(error);
     }
+
+    //     if (!Number.isInteger(id) || id <= 0) {
+    //         res.status(400).json({ message: "ID inválido" });
+    //         return;
+    //     }
+
+    //     const producto = await prisma.products.findUnique({
+    //         where: { id },
+    //     });
+
+    //     if (!producto) {
+    //         res.status(404).json({ message: "Producto no encontrado" });
+    //         return;
+    //     }
+
+    //     res.json({
+    //         ...producto,
+    //         price: Number(producto.price),
+    //         stock: producto.stock,
+    //         rating: producto.rating !== null ? Number(producto.rating) : null,
+    //     });
+    // } catch (error) {
+    //     next(error);
+    // }
 }
 
 export async function crearProducto(

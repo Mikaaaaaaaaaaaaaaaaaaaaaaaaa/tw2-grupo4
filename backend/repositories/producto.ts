@@ -58,3 +58,9 @@ export async function crear(producto: DatosProducto) {
     },
   });
 }
+
+export async function obtenerPorId(id: number) {
+  return prisma.products.findUnique({
+    where: { id },
+  });
+}
