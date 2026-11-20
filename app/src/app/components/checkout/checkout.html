@@ -138,38 +138,40 @@
       </div>
     </section>
 
-    <table class="invoice-table">
-      <thead>
-        <tr>
-          <th>Detalle</th>
-          <th>Cant.</th>
-          <th>Precio</th>
-          <th>Subtotal</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of lastOrder.items">
-          <td>{{ item.nombre }}</td>
-          <td>{{ item.cantidad }}</td>
-          <td>${{ item.precio | number:'1.2-2' }}</td>
-          <td>${{ item.subtotal | number:'1.2-2' }}</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="3">Subtotal</td>
-          <td>${{ lastOrder.subtotal | number:'1.2-2' }}</td>
-        </tr>
-        <tr>
-          <td colspan="3">IVA (21%)</td>
-          <td>${{ lastOrder.impuestos | number:'1.2-2' }}</td>
-        </tr>
-        <tr class="total-row">
-          <td colspan="3">TOTAL</td>
-          <td>${{ lastOrder.total | number:'1.2-2' }}</td>
-        </tr>
-      </tfoot>
-    </table>
+    <div class="invoice-table-wrap">
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>Detalle</th>
+            <th>Cant.</th>
+            <th>Precio</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of lastOrder.items">
+            <td>{{ item.nombre }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>${{ item.precio | number:'1.2-2' }}</td>
+            <td>${{ item.subtotal | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3">Subtotal</td>
+            <td>${{ lastOrder.subtotal | number:'1.2-2' }}</td>
+          </tr>
+          <tr>
+            <td colspan="3">IVA (21%)</td>
+            <td>${{ lastOrder.impuestos | number:'1.2-2' }}</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="3">TOTAL</td>
+            <td>${{ lastOrder.total | number:'1.2-2' }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
 
     <footer class="invoice-footer">
       <p><strong>Medio de Pago:</strong> {{ lastOrder.paymentMethod | uppercase }}</p>
