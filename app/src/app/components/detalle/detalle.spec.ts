@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http/testing';
 import { Detalle } from './detalle';
 import { CarritoService } from '../../services/carrito';
+import { LoginService } from '../../services/login';
 
 describe('Detalle', () => {
   let component: Detalle;
@@ -67,6 +68,13 @@ describe('Detalle', () => {
 
     expect(component.cantidadEnCarrito()).toBe(2);
     expect(carritoService.cantidadTotal()).toBe(2);
+  });
+
+  it('solicita iniciar sesión al agregar al carrito como invitado', () => {
+    component.agregarAlCarrito();
+
+    expect(carritoService.cantidadTotal()).toBe(1);
+    expect(TestBed.inject(LoginService).modalLoginAbierto()).toBe(true);
   });
 
   it('deshabilita el boton si el producto no tiene stock', async () => {

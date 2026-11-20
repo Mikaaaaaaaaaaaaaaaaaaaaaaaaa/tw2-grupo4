@@ -22,6 +22,10 @@ export class Carrito {
 
   abrirCarrito(): void {
     this.mensajeError = '';
+    if (!this.loginService.token) {
+      this.loginService.abrirModalLogin();
+      return;
+    }
     this.carritoAbierto = true;
   }
 
@@ -51,7 +55,7 @@ export class Carrito {
 
     const usuario = this.loginService.usuario();
     if (!usuario || !this.loginService.token) {
-      this.mensajeError = 'Iniciá sesión para finalizar tu compra.';
+      this.loginService.abrirModalLogin();
       return;
     }
 

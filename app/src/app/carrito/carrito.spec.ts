@@ -31,11 +31,24 @@ describe('Carrito', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should request login instead of opening the cart for a guest', () => {
+    component.abrirCarrito();
+
+    expect(component.carritoAbierto).toBe(false);
+    expect(loginService.modalLoginAbierto()).toBe(true);
+  });
+
   it('should navigate to /checkout when finalizarCompra is called with items and logged in', () => {
     vi.spyOn(carritoService, 'items').mockReturnValue([
       { producto: { id: 1, nombre: 'P1', precio: 10, descripcion: '', categoria: '', imagen: '', stock: 10, rating: 5 }, cantidad: 1 }
     ]);
-    vi.spyOn(loginService, 'usuario').mockReturnValue({ id: 1, nombre: 'N', email: 'E', token: 'T' });
+    vi.spyOn(loginService, 'usuario').mockReturnValue({
+      id: 1,
+      nombre: 'N',
+      email: 'E',
+      role: 'USER',
+      token: 'T',
+    });
     vi.spyOn(loginService, 'token', 'get').mockReturnValue('T');
     const navigateSpy = vi.spyOn(router, 'navigate');
 
@@ -44,7 +57,7 @@ describe('Carrito', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/checkout']);
   });
 
-  it('should show error message when finalizarCompra is called without login', () => {
+  it('should request login when a guest tries to finalize a purchase', () => {
     vi.spyOn(carritoService, 'items').mockReturnValue([
       { producto: { id: 1, nombre: 'P1', precio: 10, descripcion: '', categoria: '', imagen: '', stock: 10, rating: 5 }, cantidad: 1 }
     ]);
@@ -52,6 +65,6 @@ describe('Carrito', () => {
 
     component.finalizarCompra();
 
-    expect(component.mensajeError).toBe('Iniciá sesión para finalizar tu compra.');
+    expect(loginService.modalLoginAbierto()).toBe(true);
   });
 });

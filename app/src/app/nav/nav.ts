@@ -14,22 +14,20 @@ export class Nav {
 
   private router = inject(Router);
 
-  public mostrarLogin = false;
-
   public get nombreUsuario(): string | null {
     return this.login.usuario()?.nombre ?? null;
   }
 
   public abrirLogin(): void {
-    this.mostrarLogin = true;
+    this.login.abrirModalLogin();
   }
 
   public cerrarLogin(): void {
-    this.mostrarLogin = false;
+    this.login.cerrarModalLogin();
   }
 
   public alAutenticar(): void {
-    this.mostrarLogin = false;
+    this.login.cerrarModalLogin();
   }
 
   public cerrarSesion(): void {

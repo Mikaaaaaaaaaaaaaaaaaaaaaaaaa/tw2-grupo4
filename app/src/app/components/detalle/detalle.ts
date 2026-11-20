@@ -65,6 +65,9 @@ export class Detalle implements OnInit, OnDestroy {
     }
 
     this.mostrarFeedback('ok', `Se agregó "${prod.nombre}" al carrito.`);
+    if (!this.loginService.token) {
+      this.loginService.abrirModalLogin();
+    }
   }
 
   private mostrarFeedback(tipo: 'ok' | 'error', texto: string): void {

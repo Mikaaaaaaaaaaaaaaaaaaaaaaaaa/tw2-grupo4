@@ -42,6 +42,7 @@ describe('Checkout Component', () => {
       id: 1,
       nombre: 'Test User',
       email: 'test@example.com',
+      role: 'USER',
       token: 'fake-token'
     });
 
