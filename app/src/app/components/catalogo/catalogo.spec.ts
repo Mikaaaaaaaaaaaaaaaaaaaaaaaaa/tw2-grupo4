@@ -9,6 +9,7 @@ import { Catalogo } from './catalogo';
 import { LoginService } from '../../services/login';
 import { CarritoService } from '../../services/carrito';
 import { ProductoService } from '../../services/producto';
+import { vi } from 'vitest';
 
 describe('Catalogo', () => {
   let component: Catalogo;
@@ -52,10 +53,24 @@ describe('Catalogo', () => {
 
   afterEach(() => {
     httpMock.verify();
+    vi.useRealTimers();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('aplica la búsqueda después de 300 ms sin nuevas teclas', () => {
+    vi.useFakeTimers();
+
+    component.cambiarBusqueda('notebook');
+    vi.advanceTimersByTime(299);
+    httpMock.expectNone((req) => req.url.endsWith('/products'));
+
+    vi.advanceTimersByTime(1);
+    const request = httpMock.expectOne((req) => req.url.endsWith('/products'));
+    expect(request.request.params.get('search')).toBe('notebook');
+    request.flush({ data: [], total: 0, page: 1, limit: 12, totalPages: 0 });
   });
 
   it('debe mostrar todos los productos al iniciar con el filtro Todas', () => {
@@ -116,7 +131,7 @@ describe('Catalogo', () => {
 
     expect(component.categoriaActiva).toBe('Todos');
     expect(component.busqueda).toBe('');
-    expect(component.orden).toBe('destacados');
+    expect(component.orden).toBe('precio-mayor');
     expect(component.limitePorPagina).toBe(12);
     httpMock.expectOne((req) => req.url.endsWith('/products')).flush({
       data: [],

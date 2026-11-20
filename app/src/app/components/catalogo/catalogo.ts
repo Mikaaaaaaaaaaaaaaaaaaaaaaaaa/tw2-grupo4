@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 import { CATEGORIAS, type Categoria } from '../../models/categorias.const';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   imports: [FormsModule, CommonModule, RouterModule],
@@ -27,18 +28,21 @@ export class Catalogo implements OnInit {
   public readonly categorias = CATEGORIAS;
   public categoriaActiva: Categoria | 'Todos' = 'Todos';
   public busqueda: string = '';
-  public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
+  public orden: 'precio-menor' | 'precio-mayor' = 'precio-mayor';
   public limitePorPagina: 12 | 24 = 12;
   public paginaActual = 1;
   public totalPaginas = 0;
   private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly busquedaSubject = new Subject<string>();
+  private busquedaAplicada = '';
 
   public mensajeToast: string | null = null;
 
   public get hayFiltrosActivos(): boolean {
     return this.categoriaActiva !== 'Todos'
       || this.busqueda.trim() !== ''
-      || this.orden !== 'destacados';
+      || this.orden !== 'precio-mayor';
   }
 
   public get cargandoProductos(): boolean {
@@ -69,14 +73,26 @@ export class Catalogo implements OnInit {
     private loginService: LoginService,
   ) {
     this.loginService.sesionCerrada$
-      .pipe(takeUntilDestroyed(inject(DestroyRef)))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.resetearFiltros());
+
+    this.busquedaSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((busqueda) => {
+        if (busqueda === this.busquedaAplicada) return;
+        this.aplicarFiltrosBusquedas();
+      });
   }
 
   public ngOnInit(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
     this.paginaActual = 1;
+    this.busquedaAplicada = '';
     this.cargarDesdeBackend();
   }
 
@@ -112,7 +128,7 @@ export class Catalogo implements OnInit {
   public resetearFiltros(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
-    this.orden = 'destacados';
+    this.orden = 'precio-mayor';
     this.limitePorPagina = 12;
     this.paginaActual = 1;
     this.cargarDesdeBackend();
@@ -127,11 +143,22 @@ export class Catalogo implements OnInit {
   }
 
   public aplicarFiltrosBusquedas(): void {
+    this.busquedaAplicada = this.busqueda;
     this.paginaActual = 1;
     this.cargarDesdeBackend();
   }
 
   public filtrarPorCategoria(categoria: Categoria | 'Todos'): void {
+  public cambiarBusqueda(busqueda: string): void {
+    this.busqueda = busqueda;
+    this.busquedaSubject.next(busqueda);
+  }
+
+  public aplicarBusquedaInmediata(): void {
+    this.aplicarFiltrosBusquedas();
+  }
+
+  public filtrarPorCategoria(categoria: string): void {
     if (categoria === 'Todos') {
       this.categoriaActiva = 'Todos';
       this.paginaActual = 1;

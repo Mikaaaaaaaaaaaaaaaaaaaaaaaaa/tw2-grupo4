@@ -22,7 +22,7 @@ export interface ParametrosProductos {
   limit?: number;
   category?: string;
   search?: string;
-  sort?: 'destacados' | 'precio-menor' | 'precio-mayor';
+  sort?: 'precio-menor' | 'precio-mayor';
 }
 
 export interface RespuestaPaginadaApiDto {
