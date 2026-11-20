@@ -128,6 +128,7 @@ export class Catalogo implements OnInit {
   public resetearFiltros(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
+    this.busquedaAplicada = '';
     this.orden = 'precio-mayor';
     this.limitePorPagina = 12;
     this.paginaActual = 1;
@@ -148,7 +149,6 @@ export class Catalogo implements OnInit {
     this.cargarDesdeBackend();
   }
 
-  public filtrarPorCategoria(categoria: Categoria | 'Todos'): void {
   public cambiarBusqueda(busqueda: string): void {
     this.busqueda = busqueda;
     this.busquedaSubject.next(busqueda);
@@ -158,7 +158,7 @@ export class Catalogo implements OnInit {
     this.aplicarFiltrosBusquedas();
   }
 
-  public filtrarPorCategoria(categoria: string): void {
+  public filtrarPorCategoria(categoria: Categoria | 'Todos'): void {
     if (categoria === 'Todos') {
       this.categoriaActiva = 'Todos';
       this.paginaActual = 1;
