@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { tap } from 'rxjs';
+import { Subject, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface Usuario {
@@ -21,6 +21,17 @@ export class LoginService {
   private readonly usuarioSignal = signal<Usuario | null>(this.cargar());
   readonly usuario = this.usuarioSignal.asReadonly();
   readonly esAdmin = computed(() => this.usuarioSignal()?.role === 'ADMIN');
+  private readonly modalLoginSignal = signal(false);
+  readonly modalLoginAbierto = this.modalLoginSignal.asReadonly();
+  readonly sesionCerrada$ = new Subject<void>();
+
+  abrirModalLogin(): void {
+    this.modalLoginSignal.set(true);
+  }
+
+  cerrarModalLogin(): void {
+    this.modalLoginSignal.set(false);
+  }
 
   login(email: string, password: string) {
     return this.http
@@ -41,6 +52,7 @@ export class LoginService {
   logout(): void {
     localStorage.removeItem(CLAVE);
     this.usuarioSignal.set(null);
+    this.sesionCerrada$.next();
   }
 
   private guardar(u: Usuario): void {

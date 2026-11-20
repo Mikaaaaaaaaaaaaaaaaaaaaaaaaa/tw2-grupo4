@@ -42,6 +42,7 @@ describe('Checkout Component', () => {
       id: 1,
       nombre: 'Test User',
       email: 'test@example.com',
+      role: 'USER',
       token: 'fake-token'
     });
 
@@ -87,7 +88,7 @@ describe('Checkout Component', () => {
 
     component.confirmPurchase();
 
-    const request = httpMock.expectOne((req) => req.url.endsWith('/pedidos'));
+    const request = httpMock.expectOne((req) => req.url.endsWith('/orders'));
     request.flush({
       id: 42,
       userId: 1,
@@ -109,7 +110,7 @@ describe('Checkout Component', () => {
 
     component.confirmPurchase();
 
-    httpMock.expectOne((req) => req.url.endsWith('/pedidos')).flush(
+    httpMock.expectOne((req) => req.url.endsWith('/orders')).flush(
       { message: 'Stock insuficiente para Auriculares (disponible: 2)' },
       { status: 400, statusText: 'Bad Request' },
     );

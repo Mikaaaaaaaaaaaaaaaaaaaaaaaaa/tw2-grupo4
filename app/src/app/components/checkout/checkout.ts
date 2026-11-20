@@ -6,12 +6,11 @@ import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
 import { PedidoService } from '../../services/pedido';
 import { ProductoService } from '../../services/producto';
-import { Nav } from '../../nav/nav';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, Nav],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })

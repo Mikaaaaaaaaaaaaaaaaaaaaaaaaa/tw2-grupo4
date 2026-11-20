@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Producto } from '../../models/producto.interface';
 import { FormProducto } from './form-producto';
+import { provideRouter } from '@angular/router';
 
 describe('FormProducto', () => {
   let fixture: ComponentFixture<FormProducto>;
@@ -9,6 +10,7 @@ describe('FormProducto', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FormProducto],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FormProducto);

@@ -118,7 +118,7 @@
         <span class="invoice-type">FACTURA B</span>
       </div>
       <div class="invoice-meta">
-        <p><strong>N° Pedido:</strong> #{{ lastOrder.id }}</p>
+        <p><strong>N° Pedido:</strong> #{{ lastOrder.orderNumber ?? lastOrder.id }}</p>
         <p><strong>Fecha:</strong> {{ lastOrder.date | date:'dd/MM/yyyy' }}</p>
       </div>
     </header>

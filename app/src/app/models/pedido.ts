@@ -12,6 +12,7 @@ export interface NuevoItemPedido {
 
 export interface Pedido {
   id: number;
+  orderNumber?: number;
   userId: number;
   items: ItemPedido[];
   total: number;

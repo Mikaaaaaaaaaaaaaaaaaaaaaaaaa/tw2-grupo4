@@ -9,22 +9,6 @@
     <span class="brand-name">TechStore</span>
   </a>
 
-  <div class="sesion">
-    <span class="sesion-nombre">
-      <i class="fas fa-user" aria-hidden="true"></i>
-      {{ nombreUsuario ?? 'Invitado' }}
-    </span>
-
-    @if (nombreUsuario) {
-      <button type="button" class="sesion-btn secundario" (click)="cerrarSesion()">
-        Cerrar sesión
-      </button>
-    } @else {
-      <button type="button" class="sesion-btn" (click)="abrirLogin()">Iniciar sesión</button>
-    }
-  </div>
-
-  <!-- Navegación -->
   <ul class="nav-list">
     <li>
       <a
@@ -69,8 +53,26 @@
     </li>
   }
   </ul>
+
+  <div class="sesion">
+    <span class="sesion-nombre">
+      <i class="fas fa-user" aria-hidden="true"></i>
+      {{ nombreUsuario ?? 'Invitado' }}
+    </span>
+
+    @if (nombreUsuario) {
+      <button type="button" class="sesion-btn secundario" (click)="cerrarSesion()">
+        Cerrar sesión
+      </button>
+    } @else {
+      <button type="button" class="sesion-btn" (click)="abrirLogin()">Iniciar sesión</button>
+    }
+  </div>
+
+  <!-- Navegación -->
+  
 </nav>
 
-@if (mostrarLogin) {
+@if (login.modalLoginAbierto()) {
   <app-login (cerrar)="cerrarLogin()" (autenticado)="alAutenticar()"></app-login>
 }
