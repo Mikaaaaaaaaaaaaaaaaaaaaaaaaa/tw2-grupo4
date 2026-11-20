@@ -118,7 +118,7 @@ describe('Catalogo', () => {
 
     component.agregarAlCarritoDeCompras(component.productosFiltrados[0]);
 
-    expect(carritoService.cantidadTotal()).toBe(1);
+    expect(carritoService.items().length).toBe(0);
     expect(loginService.modalLoginAbierto()).toBe(true);
   });
 

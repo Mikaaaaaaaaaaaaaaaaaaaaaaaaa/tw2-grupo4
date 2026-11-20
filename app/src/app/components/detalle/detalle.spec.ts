@@ -8,6 +8,7 @@ import {
 import { Detalle } from './detalle';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
+import { vi } from 'vitest';
 
 describe('Detalle', () => {
   let component: Detalle;
@@ -54,6 +55,8 @@ describe('Detalle', () => {
   });
 
   it('agrega al carrito hasta agotar el stock disponible y luego bloquea', () => {
+    vi.spyOn(TestBed.inject(LoginService), 'token', 'get').mockReturnValue('token-de-prueba');
+
     expect(component.stockDisponible()).toBe(2);
     expect(component.puedeAgregar()).toBe(true);
 
@@ -70,10 +73,10 @@ describe('Detalle', () => {
     expect(carritoService.cantidadTotal()).toBe(2);
   });
 
-  it('solicita iniciar sesión al agregar al carrito como invitado', () => {
+  it('solicita iniciar sesión sin agregar al carrito como invitado', () => {
     component.agregarAlCarrito();
 
-    expect(carritoService.cantidadTotal()).toBe(1);
+    expect(carritoService.items().length).toBe(0);
     expect(TestBed.inject(LoginService).modalLoginAbierto()).toBe(true);
   });
 

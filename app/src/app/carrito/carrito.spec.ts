@@ -14,6 +14,8 @@ describe('Carrito', () => {
   let loginService: LoginService;
 
   beforeEach(async () => {
+    localStorage.clear();
+    sessionStorage.clear();
     await TestBed.configureTestingModule({
       imports: [Carrito],
       providers: [provideRouter([]), provideHttpClient()],
@@ -42,7 +44,7 @@ describe('Carrito', () => {
     vi.spyOn(carritoService, 'items').mockReturnValue([
       { producto: { id: 1, nombre: 'P1', precio: 10, descripcion: '', categoria: '', imagen: '', stock: 10, rating: 5 }, cantidad: 1 }
     ]);
-    vi.spyOn(loginService, 'usuario').mockReturnValue({
+    (loginService as any).usuarioSignal.set({
       id: 1,
       nombre: 'N',
       email: 'E',
@@ -68,7 +70,15 @@ describe('Carrito', () => {
     expect(loginService.modalLoginAbierto()).toBe(true);
   });
 
-  it('vacía el carrito y elimina su persistencia al cerrar sesión', () => {
+  it('recuerda el carrito por usuario y lo vacía definitivamente al vaciarlo', async () => {
+    (loginService as any).usuarioSignal.set({
+      id: 1,
+      nombre: 'N',
+      email: 'E',
+      role: 'USER',
+      token: 'T',
+    });
+    await fixture.whenStable();
     carritoService.agregar({
       id: 1,
       nombre: 'Producto',
@@ -79,11 +89,36 @@ describe('Carrito', () => {
       stock: 5,
       rating: 5,
     });
-    expect(localStorage.getItem('techstore.carrito')).not.toBeNull();
+    expect(localStorage.getItem('techstore.carrito.1')).not.toBeNull();
 
     loginService.logout();
+    await fixture.whenStable();
 
     expect(carritoService.items()).toEqual([]);
-    expect(localStorage.getItem('techstore.carrito')).toBeNull();
+    expect(localStorage.getItem('techstore.carrito.1')).not.toBeNull();
+
+    (loginService as any).usuarioSignal.set({
+      id: 2,
+      nombre: 'Otro',
+      email: 'otro@example.com',
+      role: 'USER',
+      token: 'T2',
+    });
+    await fixture.whenStable();
+    expect(carritoService.items()).toEqual([]);
+
+    (loginService as any).usuarioSignal.set({
+      id: 1,
+      nombre: 'N',
+      email: 'E',
+      role: 'USER',
+      token: 'T',
+    });
+    await fixture.whenStable();
+    expect(carritoService.items().length).toBe(1);
+
+    carritoService.vaciar();
+    expect(carritoService.items()).toEqual([]);
+    expect(localStorage.getItem('techstore.carrito.1')).toBeNull();
   });
 });
