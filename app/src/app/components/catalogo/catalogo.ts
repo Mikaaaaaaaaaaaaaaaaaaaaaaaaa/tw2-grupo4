@@ -35,6 +35,34 @@ export class Catalogo implements OnInit {
 
   public mensajeToast: string | null = null;
 
+  public get hayFiltrosActivos(): boolean {
+    return this.categoriaActiva !== 'Todos'
+      || this.busqueda.trim() !== ''
+      || this.orden !== 'destacados';
+  }
+
+  public get cargandoProductos(): boolean {
+    return this.productoService.cargando();
+  }
+
+  public get totalResultados(): number {
+    return this.productoService.paginacion().total;
+  }
+
+  public get inicioResultados(): number {
+    const paginacion = this.productoService.paginacion();
+    return paginacion.total === 0
+      ? 0
+      : (paginacion.page - 1) * paginacion.limit + 1;
+  }
+
+  public get finResultados(): number {
+    const paginacion = this.productoService.paginacion();
+    return paginacion.total === 0
+      ? 0
+      : Math.min(paginacion.page * paginacion.limit, paginacion.total);
+  }
+
   public constructor(
     private productoService: ProductoService,
     private carritoService: CarritoService,
@@ -86,7 +114,7 @@ export class Catalogo implements OnInit {
     this.mostrarToast('Sesión cerrada correctamente.');
   }
 
-  private resetearFiltros(): void {
+  public resetearFiltros(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
     this.orden = 'destacados';
@@ -123,6 +151,7 @@ export class Catalogo implements OnInit {
   public cambiarPagina(pagina: number): void {
     if (pagina < 1 || pagina > this.totalPaginas) return;
     this.paginaActual = pagina;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     this.cargarDesdeBackend();
   }
 

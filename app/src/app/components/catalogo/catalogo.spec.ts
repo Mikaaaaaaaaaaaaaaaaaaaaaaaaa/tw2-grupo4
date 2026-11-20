@@ -8,6 +8,7 @@ import {
 import { Catalogo } from './catalogo';
 import { LoginService } from '../../services/login';
 import { CarritoService } from '../../services/carrito';
+import { ProductoService } from '../../services/producto';
 
 describe('Catalogo', () => {
   let component: Catalogo;
@@ -64,6 +65,19 @@ describe('Catalogo', () => {
     expect(component.productosFiltrados.length).toBeGreaterThan(0);
   });
 
+  it('calcula el rango visible a partir de la paginación real', () => {
+    const productoService = TestBed.inject(ProductoService);
+    productoService.paginacion.set({ total: 36, page: 2, limit: 12, totalPages: 3 });
+
+    expect(component.inicioResultados).toBe(13);
+    expect(component.finResultados).toBe(24);
+    expect(component.totalResultados).toBe(36);
+
+    productoService.paginacion.set({ total: 0, page: 1, limit: 12, totalPages: 0 });
+    expect(component.inicioResultados).toBe(0);
+    expect(component.finResultados).toBe(0);
+  });
+
   it('cambia a 24 productos por página y vuelve a la primera página', () => {
     component.paginaActual = 3;
 
@@ -108,7 +122,7 @@ describe('Catalogo', () => {
       data: [],
       total: 0,
       page: 1,
-      limit: 10,
+      limit: 12,
       totalPages: 0,
     });
   });

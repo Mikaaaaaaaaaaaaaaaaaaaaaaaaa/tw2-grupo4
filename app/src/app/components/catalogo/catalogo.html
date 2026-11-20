@@ -65,8 +65,20 @@
           <option [ngValue]="24">24</option>
         </select>
       </label>
+
+      <button
+        *ngIf="hayFiltrosActivos"
+        type="button"
+        (click)="resetearFiltros()"
+        class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-700 font-medium text-xs hover:bg-slate-200 hover:border-slate-400 cursor-pointer whitespace-nowrap">
+        Limpiar filtros
+      </button>
     </div>
   </div>
+
+  <p *ngIf="!cargandoProductos && totalResultados > 0" class="text-sm text-slate-500" aria-live="polite">
+    Mostrando {{ inicioResultados }}–{{ finResultados }} de {{ totalResultados }} productos
+  </p>
 
   <!-- Grilla de tarjetas. -->
   <div *ngIf="productosFiltrados.length > 0; else sinProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -115,12 +127,18 @@
 
   <!-- Estado sin resultados. -->
   <ng-template #sinProductos>
+    <div *ngIf="cargandoProductos; else estadoVacio" class="py-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200" id="cargando_productos_div">
+      <p class="font-medium text-slate-600">Cargando productos...</p>
+    </div>
+  </ng-template>
+
+  <ng-template #estadoVacio>
     <div class="py-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200" id="sin_resultados_div">
       <i class="fa-solid fa-magnifying-glass text-4xl mb-3 text-slate-300"></i>
 
-      <p class="font-medium text-slate-600">No se encontraron productos con ese criterio.</p>
+      <p class="font-medium text-slate-600">No encontramos productos con los filtros seleccionados</p>
 
-      <button (click)="filtrarPorCategoria('Todos'); busqueda = ''; aplicarFiltrosBusquedas()" class="mt-3 text-indigo-600 font-semibold text-xs hover:underline uppercase" id="limpiar_filtros_button">
+      <button (click)="resetearFiltros()" class="mt-3 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-700 font-medium text-xs hover:bg-slate-200 hover:border-slate-400 cursor-pointer" id="limpiar_filtros_button">
         Limpiar filtros
       </button>
     </div>
