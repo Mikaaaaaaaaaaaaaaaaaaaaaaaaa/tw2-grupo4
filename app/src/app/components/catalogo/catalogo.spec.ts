@@ -116,7 +116,7 @@ describe('Catalogo', () => {
 
     expect(component.categoriaActiva).toBe('Todos');
     expect(component.busqueda).toBe('');
-    expect(component.orden).toBe('destacados');
+    expect(component.orden).toBe('precio-mayor');
     expect(component.limitePorPagina).toBe(12);
     httpMock.expectOne((req) => req.url.endsWith('/products')).flush({
       data: [],

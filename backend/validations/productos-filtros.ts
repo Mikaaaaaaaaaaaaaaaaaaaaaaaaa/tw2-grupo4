@@ -1,5 +1,4 @@
 export const SORTS = [
-  'destacados',
   'precio-menor',
   'precio-mayor',
 ] as const;
@@ -63,7 +62,7 @@ export function validarYNormalizarFiltrosProductos(
   const limit = enteroPositivo(query.limit, 'limit', 25, errores);
   const category = valorTexto(query.category);
   const search = valorTexto(query.search);
-  const sort = valorTexto(query.sort) ?? 'destacados';
+  const sort = valorTexto(query.sort) ?? 'precio-mayor';
 
   if (Number.isInteger(page) && page < 1) {
     errores.push({
@@ -82,7 +81,7 @@ export function validarYNormalizarFiltrosProductos(
   if (!SORTS.includes(sort as SortProductos)) {
     errores.push({
       campo: 'sort',
-      mensaje: 'sort debe ser destacados, precio-menor o precio-mayor.',
+      mensaje: 'sort debe ser precio-menor o precio-mayor.',
     });
   }
 

@@ -27,7 +27,7 @@ export class Catalogo implements OnInit {
   public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio', 'Componentes'];
   public categoriaActiva: string = 'Todos';
   public busqueda: string = '';
-  public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
+  public orden: 'precio-menor' | 'precio-mayor' = 'precio-mayor';
   public limitePorPagina: 12 | 24 = 12;
   public paginaActual = 1;
   public totalPaginas = 0;
@@ -38,7 +38,7 @@ export class Catalogo implements OnInit {
   public get hayFiltrosActivos(): boolean {
     return this.categoriaActiva !== 'Todos'
       || this.busqueda.trim() !== ''
-      || this.orden !== 'destacados';
+      || this.orden !== 'precio-mayor';
   }
 
   public get cargandoProductos(): boolean {
@@ -117,7 +117,7 @@ export class Catalogo implements OnInit {
   public resetearFiltros(): void {
     this.categoriaActiva = 'Todos';
     this.busqueda = '';
-    this.orden = 'destacados';
+    this.orden = 'precio-mayor';
     this.limitePorPagina = 12;
     this.paginaActual = 1;
     this.cargarDesdeBackend();
