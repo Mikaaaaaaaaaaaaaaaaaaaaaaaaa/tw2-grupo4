@@ -31,7 +31,7 @@
       </button>
 
       <button
-        *ngFor="let categoriaIngresada of ['Laptops', 'Perifericos', 'Audio', 'Componentes']"
+        *ngFor="let categoriaIngresada of categorias"
         (click)="filtrarPorCategoria(categoriaIngresada)"
         [class]="categoriaActiva === categoriaIngresada ? 'px-4 py-1.5 rounded-lg text-sm font-medium bg-indigo-600 text-white shadow-sm whitespace-nowrap' : 'px-4 py-1.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap'">
         {{ categoriaIngresada }}

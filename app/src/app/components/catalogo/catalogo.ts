@@ -9,6 +9,7 @@ import { Login } from '../login/login';
 import { Nav } from '../../nav/nav';
 import { CarritoService } from '../../services/carrito';
 import { LoginService } from '../../services/login';
+import { CATEGORIAS, type Categoria } from '../../models/categorias.const';
 
 @Component({
   imports: [FormsModule, CommonModule, RouterModule, Login, Nav],
@@ -26,8 +27,8 @@ export class Catalogo implements OnInit {
   public get esAdmin(): boolean {
   return this.loginService.esAdmin();
 }
-  public categorias: string[] = ['Todos', 'Laptops', 'Perifericos', 'Audio', 'Componentes'];
-  public categoriaActiva: string = 'Todos';
+  public readonly categorias = CATEGORIAS;
+  public categoriaActiva: Categoria | 'Todos' = 'Todos';
   public busqueda: string = '';
   public orden: 'destacados' | 'precio-menor' | 'precio-mayor' = 'destacados';
   public paginaActual = 1;
@@ -78,12 +79,7 @@ export class Catalogo implements OnInit {
       page: this.paginaActual,
       limit: 25,
       ...(this.categoriaActiva !== 'Todos'
-        ? {
-            category:
-              this.categoriaActiva === 'Perifericos'
-                ? 'Periféricos'
-                : this.categoriaActiva,
-          }
+        ? { category: this.categoriaActiva }
         : {}),
       ...(this.busqueda.trim() ? { search: this.busqueda.trim() } : {}),
       sort: this.orden,
@@ -114,7 +110,7 @@ export class Catalogo implements OnInit {
     this.cargarDesdeBackend();
   }
 
-  public filtrarPorCategoria(categoria: string): void {
+  public filtrarPorCategoria(categoria: Categoria | 'Todos'): void {
     if (categoria === 'Todos') {
       this.categoriaActiva = 'Todos';
       this.paginaActual = 1;
