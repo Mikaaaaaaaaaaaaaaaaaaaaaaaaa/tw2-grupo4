@@ -66,23 +66,24 @@
       </label>
 
       <button
-        *ngIf="hayFiltrosActivos"
         type="button"
         (click)="resetearFiltros()"
-        class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-700 font-medium text-xs hover:bg-slate-200 hover:border-slate-400 cursor-pointer whitespace-nowrap">
+        [disabled]="!hayFiltrosActivos"
+        class="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-700 font-medium text-xs hover:bg-slate-200 hover:border-slate-400 cursor-pointer whitespace-nowrap disabled:opacity-40 disabled:cursor-not-allowed">
         Limpiar filtros
       </button>
     </div>
   </div>
 
-  <p *ngIf="!cargandoProductos && totalResultados > 0" class="text-sm text-slate-500" aria-live="polite">
+  <p [class.invisible]="totalResultados === 0" class="min-h-[20px] text-sm text-slate-500" aria-live="polite">
     Mostrando {{ inicioResultados }}–{{ finResultados }} de {{ totalResultados }} productos
   </p>
 
   <!-- Grilla de tarjetas. -->
   <div class="min-h-[450px]">
-  <div *ngIf="productosFiltrados.length > 0; else sinProductos" [class.opacity-60]="cargandoProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 transition-opacity">
-    <div *ngFor="let prod of productosFiltrados" class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
+  <div *ngIf="productosFiltrados.length > 0; else sinProductos" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    @for (prod of productosFiltrados; track prod.id) {
+    <div class="bg-white rounded-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col group">
 
     <!-- Imagen. -->
     <div class="relative h-48 bg-slate-100 overflow-hidden cursor-pointer" [routerLink]="['/producto', prod.id]">
@@ -101,7 +102,7 @@
             {{ prod.nombre }}
           </h3>
 
-          <p class="text-xs text-slate-500 line-clamp-2 mt-1">{{ prod.descripcion }}</p>
+          <p class="text-xs text-slate-500 line-clamp-2 mt-1 min-h-[2.25rem]">{{ prod.descripcion }}</p>
           <p *ngIf="prod.stock > 0" class="mt-2 text-xs font-semibold text-emerald-600">
             Stock: {{ prod.stock - cantidadEnCarrito(prod.id) }} disponibles
           </p>
@@ -120,9 +121,10 @@
             </button>
           }
         </div>
-    </div>
 
     </div>
+    </div>
+    }
   </div>
 
   <!-- Estado sin resultados. -->

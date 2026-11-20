@@ -59,7 +59,7 @@ export function validarYNormalizarFiltrosProductos(
 ): ResultadoFiltrosProductos {
   const errores: Array<{ campo: string; mensaje: string }> = [];
   const page = enteroPositivo(query.page, 'page', 1, errores);
-  const limit = enteroPositivo(query.limit, 'limit', 25, errores);
+  const limit = enteroPositivo(query.limit, 'limit', 12, errores);
   const category = valorTexto(query.category);
   const search = valorTexto(query.search);
   const sort = valorTexto(query.sort) ?? 'precio-mayor';
