@@ -17,6 +17,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'productos/:id/editar',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./pages/cargar-producto/cargar-producto').then(
+        (m) => m.CargarProducto,
+      ),
+  },
+  {
     path: '',
     component: Catalogo,
     children: [{ path: 'producto/:id', component: Detalle }],

@@ -5,8 +5,12 @@
   novalidate
 >
   <div class="space-y-1">
-    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">Alta de Nuevo Producto</h1>
-    <p class="text-sm text-slate-500 dark:text-slate-400">Completá los datos para incorporar un producto al catálogo.</p>
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100">
+      {{ productoInicial() ? 'Modificar producto' : 'Alta de Nuevo Producto' }}
+    </h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400">
+      {{ productoInicial() ? 'Actualizá los datos del producto.' : 'Completá los datos para incorporar un producto al catálogo.' }}
+    </p>
   </div>
 
   <div>
@@ -105,7 +109,7 @@
 
   <button type="submit" [disabled]="form.invalid || guardando()"
     class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-md shadow-indigo-500/20">
-    {{ guardando() ? 'Guardando...' : 'Guardar Producto' }}
+    {{ guardando() ? 'Guardando...' : (productoInicial() ? 'Guardar cambios' : 'Guardar Producto') }}
   </button>
 
   <a routerLink="/catalogo" class="w-full sm:w-1/2 mx-auto flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-100 font-bold py-2.5 rounded-xl text-sm transition-all border border-slate-300 dark:border-slate-700 shadow-sm bg-white dark:bg-slate-800 font-montserrat">

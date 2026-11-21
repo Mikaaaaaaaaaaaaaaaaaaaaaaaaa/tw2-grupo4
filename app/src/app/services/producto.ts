@@ -108,7 +108,7 @@ export class ProductoService {
     return this.http.get<ProductoApiDto>(`${this.apiUrl}/${id}`).pipe(
       map((item) => this.traducirDesdeApi(item)),
       catchError(() =>
-        // Si el backend no tiene ruta GET /products/:id, traemos todos y buscamos el ID
+        // La búsqueda en el catálogo también excluye productos dados de baja.
         this.cargarProductos(true).pipe(
           map((lista) => lista.find((p) => p.id === id)),
           catchError(() => of(undefined)),
@@ -121,6 +121,26 @@ export class ProductoService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => this.productos.update((productos) => productos.filter((p) => p.id !== id))),
     );
+  }
+
+  public actualizar(producto: Producto): Observable<Product> {
+    return this.http
+      .put<ProductoApiDto>(`${this.apiUrl}/${producto.id}`, {
+        title: producto.nombre,
+        description: producto.descripcion,
+        category: producto.clasificacion,
+        price: producto.precio,
+        stock: producto.stock,
+        image: producto.imagen ?? null,
+      })
+      .pipe(
+        map((respuesta) => this.traducirDesdeApi(respuesta)),
+        tap((actualizado) =>
+          this.productos.update((productos) =>
+            productos.map((actual) => (actual.id === actualizado.id ? actualizado : actual)),
+          ),
+        ),
+      );
   }
 
   /**

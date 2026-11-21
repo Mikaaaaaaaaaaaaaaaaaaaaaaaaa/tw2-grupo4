@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/db";
 import {
+    actualizarProducto as actualizarProductoEnServicio,
     crearProducto as crearProductoEnServicio,
     darDeBajaProducto as darDeBajaProductoEnServicio,
     listarProductos as listarProductosEnServicio,
@@ -104,25 +105,61 @@ export async function crearProducto(
 }
 
 export async function darDeBajaProducto(
-      req: Request,
-      res: Response,
-      next: NextFunction,
+    req: Request,
+    res: Response,
+    next: NextFunction,
 ): Promise<void> {
-      try {
-          const id = Number(req.params.id);
-          if (!Number.isInteger(id) || id <= 0) {
-              res.status(400).json({ message: "ID inválido" });
-              return;
-          }
+    try {
+        const id = Number(req.params.id);
+        if (!Number.isInteger(id) || id <= 0) {
+            res.status(400).json({ message: "ID inválido" });
+            return;
+        }
 
-          const dadoDeBaja = await darDeBajaProductoEnServicio(id);
-          if (!dadoDeBaja) {
-              res.status(404).json({ message: "Producto no encontrado o ya dado de baja" });
-              return;
-          }
+        const dadoDeBaja = await darDeBajaProductoEnServicio(id);
+        if (!dadoDeBaja) {
+            res.status(404).json({ message: "Producto no encontrado o ya dado de baja" });
+            return;
+        }
 
-          res.status(204).send();
-      } catch (error) {
-          next(error);
-      }
+        res.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function actualizarProducto(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> {
+    try {
+        const producto = await actualizarProductoEnServicio(
+            Number(req.params.id),
+            req.body,
+        );
+
+        if ('error' in producto) {
+            if (producto.error === 'ID_INVALIDO') {
+                res.status(400).json({ message: "ID inválido" });
+                return;
+            }
+
+            res.status(404).json({ message: "Producto no encontrado o no disponible" });
+            return;
+        }
+
+        res.json({
+            ...producto,
+            price: Number(producto.price),
+            rating: producto.rating !== null ? Number(producto.rating) : null,
+        });
+    } catch (error: unknown) {
+        if (error instanceof ErrorValidacion) {
+            res.status(400).json({ errores: error.errores });
+            return;
+        }
+
+        next(error);
+    }
 }

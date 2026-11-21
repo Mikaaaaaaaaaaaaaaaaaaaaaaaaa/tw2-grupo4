@@ -1,7 +1,7 @@
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
   @if (exito()) {
     <div class="max-w-3xl mx-auto mb-5 bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm font-semibold" role="status">
-      ¡Producto agregado al catálogo correctamente!
+      {{ modoEdicion() ? '¡Producto modificado correctamente!' : '¡Producto agregado al catálogo correctamente!' }}
     </div>
   }
 
@@ -11,9 +11,16 @@
     </div>
   }
 
-  <app-form-producto
-    [guardando]="guardando()"
-    [erroresServidor]="erroresServidor()"
-    (productoGuardado)="guardarProducto($event)"
-  />
+  @if (cargandoProducto()) {
+    <div class="max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-2xl p-6 text-center text-slate-600 dark:text-slate-300" role="status">
+      Cargando producto...
+    </div>
+  } @else if (!modoEdicion() || productoInicial()) {
+    <app-form-producto
+      [guardando]="guardando()"
+      [erroresServidor]="erroresServidor()"
+      [productoInicial]="productoInicial()"
+      (productoGuardado)="guardarProducto($event)"
+    />
+  }
 </main>

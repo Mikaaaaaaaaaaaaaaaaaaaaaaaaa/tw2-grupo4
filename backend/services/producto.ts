@@ -1,6 +1,7 @@
 import { 
   crear as crearProductoEnRepositorio,
   darDeBaja as darDeBajaEnRepositorio,
+  actualizar as actualizarProductoEnRepositorio,
   listar as listarProductosEnRepositorio,
   obtenerPorId as obtenerProductoPorIdEnRepositorio,
   type FiltrosProductos,
@@ -36,7 +37,11 @@ function convertirNumero(valor: unknown): number {
 
 function normalizarProducto(datos: Record<string, unknown>): DatosProducto {
   const image =
-    typeof datos.image === "string" ? datos.image.trim() : undefined;
+    typeof datos.image === "string"
+      ? datos.image.trim()
+      : datos.image === null
+        ? null
+        : undefined;
 
   return {
     title: typeof datos.title === "string" ? datos.title.trim() : "",
@@ -62,6 +67,30 @@ export async function crearProducto(datos: unknown) {
   }
 
   return crearProductoEnRepositorio(producto);
+}
+
+export async function actualizarProducto(id: number, datos: unknown) {
+  if (!Number.isInteger(id) || id <= 0) {
+    return { error: "ID_INVALIDO" } as const;
+  }
+
+  const producto = normalizarProducto(
+    typeof datos === "object" && datos !== null
+      ? (datos as Record<string, unknown>)
+      : {},
+  );
+  const resultado = validarProducto(producto);
+
+  if (!resultado.valido) {
+    throw new ErrorValidacion(resultado.errores);
+  }
+
+  const actualizado = await actualizarProductoEnRepositorio(id, producto);
+  if (!actualizado) {
+    return { error: "PRODUCTO_NO_ENCONTRADO" } as const;
+  }
+
+  return actualizado;
 }
 
 export async function listarProductos(filtros: FiltrosProductos) {

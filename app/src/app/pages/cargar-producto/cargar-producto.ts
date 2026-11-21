@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   inject,
   signal,
   viewChild,
@@ -12,7 +13,7 @@ import {
 } from '../../components/form-producto/form-producto';
 import { Producto } from '../../models/producto.interface';
 import { ProductoService } from '../../services/producto';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-cargar-producto',
@@ -20,11 +21,15 @@ import { Router } from '@angular/router';
   templateUrl: './cargar-producto.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CargarProducto {
+export class CargarProducto implements OnInit {
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly productoService = inject(ProductoService);
   private readonly formulario = viewChild(FormProducto);
 
+  readonly modoEdicion = signal(false);
+  readonly cargandoProducto = signal(false);
+  readonly productoInicial = signal<Producto | null>(null);
   readonly guardando = signal(false);
   readonly error = signal<string | null>(null);
   readonly erroresServidor = signal<
@@ -32,17 +37,58 @@ export class CargarProducto {
   >({});
   readonly exito = signal(false);
 
+  ngOnInit(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    if (idParam === null) return;
+
+    this.modoEdicion.set(true);
+    const id = Number(idParam);
+    if (!Number.isInteger(id) || id <= 0) {
+      this.error.set('El identificador del producto no es válido.');
+      return;
+    }
+
+    this.cargandoProducto.set(true);
+    this.productoService.obtenerPorId$(id).subscribe({
+      next: (producto) => {
+        this.cargandoProducto.set(false);
+        if (!producto) {
+          this.error.set('El producto no existe o ya no está disponible.');
+          return;
+        }
+
+        this.productoInicial.set({
+          id: producto.id,
+          nombre: producto.nombre,
+          descripcion: producto.descripcion,
+          clasificacion: producto.categoria,
+          precio: producto.precio,
+          stock: producto.stock,
+          imagen: producto.imagen,
+        });
+      },
+      error: () => {
+        this.cargandoProducto.set(false);
+        this.error.set('No se pudo cargar el producto. Intentá nuevamente.');
+      },
+    });
+  }
+
   public guardarProducto(producto: Producto): void {
     this.guardando.set(true);
     this.error.set(null);
     this.erroresServidor.set({});
     this.exito.set(false);
 
-    this.productoService.crear(producto).subscribe({
+    const guardado = this.modoEdicion()
+      ? this.productoService.actualizar(producto)
+      : this.productoService.crear(producto);
+
+    guardado.subscribe({
       next: () => {
         this.guardando.set(false);
         this.exito.set(true);
-        this.formulario()?.reiniciar();
+        if (!this.modoEdicion()) this.formulario()?.reiniciar();
         
         setTimeout(() => {
           this.router.navigate(['/catalogo']);
@@ -83,7 +129,16 @@ export class CargarProducto {
     }
 
     if (error.status === 403) {
-      this.error.set('No tenés permisos para cargar productos.');
+      this.error.set(
+        this.modoEdicion()
+          ? 'No tenés permisos para modificar productos.'
+          : 'No tenés permisos para cargar productos.',
+      );
+      return;
+    }
+
+    if (error.status === 404 && this.modoEdicion()) {
+      this.error.set('El producto ya no existe o no está disponible para modificar.');
       return;
     }
 
