@@ -37,6 +37,12 @@
           </div>
 
           @if (esAdmin()) {
+            <a
+              [routerLink]="['/productos', prod.id, 'editar']"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl py-3 shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center"
+            >
+              Modificar producto
+            </a>
             <button
               type="button"
               (click)="darDeBaja()"

@@ -77,4 +77,35 @@ describe('FormProducto', () => {
 
     expect(productoEmitido).toEqual(productoEsperado);
   });
+
+  it('precarga los datos y conserva el id cuando se usa para modificar', () => {
+    const producto: Producto = {
+      id: 17,
+      nombre: 'Mouse Gamer',
+      clasificacion: 'Periféricos',
+      precio: 150,
+      stock: 3,
+      descripcion: 'Mouse inalámbrico para gaming',
+      imagen: 'https://images.example.com/mouse.jpg',
+    };
+    fixture.componentRef.setInput('productoInicial', producto);
+    fixture.detectChanges();
+
+    expect(component.form.getRawValue()).toEqual({
+      nombre: producto.nombre,
+      clasificacion: producto.clasificacion,
+      precio: producto.precio,
+      stock: producto.stock,
+      imagen: producto.imagen,
+      descripcion: producto.descripcion,
+    });
+
+    let productoEmitido: Producto | undefined;
+    component.productoGuardado.subscribe((value) => {
+      productoEmitido = value;
+    });
+    component.enviar();
+
+    expect(productoEmitido?.id).toBe(producto.id);
+  });
 });

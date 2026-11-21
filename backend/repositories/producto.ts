@@ -61,6 +61,26 @@ export async function crear(producto: DatosProducto) {
   });
 }
 
+export async function actualizar(id: number, producto: DatosProducto) {
+  const { count } = await prisma.products.updateMany({
+    where: { id, status: "ACTIVE" },
+    data: {
+      title: producto.title,
+      description: producto.description,
+      category: producto.category,
+      price: producto.price,
+      stock: producto.stock,
+      ...(producto.image !== undefined ? { image: producto.image } : {}),
+    },
+  });
+
+  if (count === 0) return null;
+
+  return prisma.products.findFirst({
+    where: { id, status: "ACTIVE" },
+  });
+}
+
 export async function obtenerPorId(id: number) {
   return prisma.products.findFirst({
     where: { id, status: "ACTIVE" },

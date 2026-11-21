@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnChanges,
   inject,
   input,
   output,
@@ -48,9 +49,10 @@ const noSoloEspacios: ValidatorFn = (
   styleUrl: './form-producto.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FormProducto {
+export class FormProducto implements OnChanges {
   readonly guardando = input(false);
   readonly erroresServidor = input<Partial<Record<CampoProducto, string>>>({});
+  readonly productoInicial = input<Producto | null>(null);
   readonly productoGuardado = output<Producto>();
   readonly categorias = CATEGORIAS;
 
@@ -114,6 +116,20 @@ export class FormProducto {
     });
   }
 
+  ngOnChanges(): void {
+    const producto = this.productoInicial();
+    if (!producto) return;
+
+    this.form.patchValue({
+      nombre: producto.nombre,
+      clasificacion: producto.clasificacion,
+      precio: producto.precio,
+      stock: producto.stock,
+      imagen: producto.imagen ?? '',
+      descripcion: producto.descripcion,
+    });
+  }
+
   public enviar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -123,7 +139,7 @@ export class FormProducto {
     const valores = this.form.getRawValue();
     const imagen = valores.imagen.trim();
     const producto: Producto = {
-      id: 0,
+      id: this.productoInicial()?.id ?? 0,
       nombre: valores.nombre.trim(),
       descripcion: valores.descripcion.trim(),
       clasificacion: valores.clasificacion.trim(),
