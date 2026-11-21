@@ -53,7 +53,13 @@ export class LoginController {
       if (error.message === "DatosInvalidos") {
         return res
           .status(400)
-          .json({ message: "La clave debe tener al menos 6 caracteres." });
+          .json({ message: "Falta el token o la nueva contraseña." });
+      }
+      if (error.message === "PasswordInvalida") {
+        return res.status(400).json({
+          message:
+            "La contraseña debe tener al menos 8 caracteres, 2 números, una mayúscula y una minúscula.",
+        });
       }
       if (error.message === "TokenInvalido") {
         return res

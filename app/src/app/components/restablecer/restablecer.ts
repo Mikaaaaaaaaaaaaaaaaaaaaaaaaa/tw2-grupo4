@@ -20,7 +20,14 @@ export class Restablecer {
 
   public formulario = this.fb.group(
     {
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=(?:.*\d){2,}).+$/),
+        ],
+      ],
       confirmar: ['', [Validators.required]],
     },
     { validators: (g: AbstractControl) => (g.get('password')?.value === g.get('confirmar')?.value ? null : { noCoinciden: true }) },

@@ -1,4 +1,4 @@
-<div class="max-w-md mx-auto mt-10 bg-white dark:bg-slate-900 rounded-2xl p-6 space-y-4 shadow-xl border border-slate-100 dark:border-slate-800">
+<div class="max-w-md mx-3 sm:mx-auto mt-6 sm:mt-10 bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 space-y-4 shadow-xl border border-slate-100 dark:border-slate-800">
   <h1 class="text-xl font-bold text-slate-800 dark:text-slate-100">Elegí una clave nueva</h1>
 
   <div *ngIf="listo" class="space-y-3">
@@ -9,19 +9,30 @@
   <form *ngIf="!listo" [formGroup]="formulario" (ngSubmit)="enviar()" class="space-y-4" novalidate>
     <div>
       <label for="nueva" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Clave nueva</label>
-      <input id="nueva" type="password" formControlName="password" placeholder="Mínimo 6 caracteres"
+      <input id="nueva" type="password" formControlName="password" placeholder="Ingresá una contraseña segura"
+        aria-describedby="nueva-requisitos"
         class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-slate-100 rounded-lg p-2.5 text-sm">
-      <p *ngIf="formulario.get('password')?.touched && formulario.get('password')?.invalid" class="text-xs text-red-600 mt-1">Mínimo 6 caracteres.</p>
+      <p id="nueva-requisitos" class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        Requisitos: mínimo 8 caracteres, al menos 2 números, una mayúscula y una minúscula.
+      </p>
+      <p *ngIf="formulario.get('password')?.touched && formulario.get('password')?.hasError('required')"
+        class="text-xs text-red-600 mt-1" role="alert">Ingresá una contraseña.</p>
+      <p *ngIf="formulario.get('password')?.touched && formulario.get('password')?.hasError('minlength')"
+        class="text-xs text-red-600 mt-1" role="alert">La contraseña debe tener al menos 8 caracteres.</p>
+      <p *ngIf="formulario.get('password')?.touched && formulario.get('password')?.hasError('pattern')"
+        class="text-xs text-red-600 mt-1" role="alert">Incluí al menos 2 números, una mayúscula y una minúscula.</p>
     </div>
 
     <div>
       <label for="confirmar" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">Repetí la clave</label>
       <input id="confirmar" type="password" formControlName="confirmar"
         class="w-full bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 dark:text-slate-100 rounded-lg p-2.5 text-sm">
+      <p *ngIf="formulario.get('confirmar')?.touched && formulario.get('confirmar')?.hasError('required')"
+        class="text-xs text-red-600 mt-1" role="alert">Repetí la contraseña.</p>
       <p *ngIf="formulario.get('confirmar')?.touched && formulario.hasError('noCoinciden')" class="text-xs text-red-600 mt-1">Las claves no coinciden.</p>
     </div>
 
-    <p *ngIf="error" class="text-xs text-red-600">{{ error }}</p>
+    <p *ngIf="error" class="text-xs text-red-600" role="alert">{{ error }}</p>
 
     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-sm">
       Guardar clave nueva

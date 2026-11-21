@@ -107,8 +107,12 @@ export class LoginService {
   }
 
   async restablecer(token: string, nuevaPassword: string) {
-    if (!token || !nuevaPassword || nuevaPassword.length < 6) {
+    if (!token || typeof nuevaPassword !== "string") {
       throw new Error("DatosInvalidos");
+    }
+
+    if (!cumplePoliticaPassword(nuevaPassword)) {
+      throw new Error("PasswordInvalida");
     }
 
     const datos = jwt.decode(token) as { id?: number } | null;
