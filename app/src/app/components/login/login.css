@@ -1,3 +1,25 @@
 :host-context(.dark) {
   color: #f1f5f9;
 }
+
+.login-overlay {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.login-dialog {
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 480px) {
+  .login-overlay {
+    padding: 0.75rem;
+  }
+
+  .login-dialog {
+    padding: 1rem;
+  }
+}

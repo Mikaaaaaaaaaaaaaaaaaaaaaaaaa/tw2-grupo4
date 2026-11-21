@@ -4,6 +4,7 @@ import type { Usuario } from "../models/usuario.model";
 import type { Rol } from "../models/rol.model";
 import jwt from "jsonwebtoken";
 import { enviarMail } from "./mail.service";
+import { cumplePoliticaPassword } from "./password-policy";
 
 function hashear(password: string): string {
   const salt = randomBytes(16).toString("hex");
@@ -58,9 +59,13 @@ export class LoginService {
       !nombre ||
       !apellido ||
       !direccion ||
-      password.length < 6
+      typeof password !== "string"
     ) {
       throw new Error("DatosInvalidos");
+    }
+
+    if (!cumplePoliticaPassword(password)) {
+      throw new Error("PasswordInvalida");
     }
 
     const existe = await this.usuarioRepository.buscarPorEmail(email);

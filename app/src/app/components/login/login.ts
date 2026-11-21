@@ -1,7 +1,21 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { LoginService } from '../../services/login';
+
+function validarCoincidenciaPassword(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password')?.value;
+  const repetirPassword = control.get('repetirPassword')?.value;
+
+  return repetirPassword && password !== repetirPassword ? { passwordMismatch: true } : null;
+}
 
 @Component({
   imports: [CommonModule, ReactiveFormsModule],
@@ -44,8 +58,16 @@ export class Login {
       apellido: ['', [Validators.required]],
       direccion: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=(?:.*\d){2,}).+$/),
+        ],
+      ],
+      repetirPassword: ['', [Validators.required]],
+    }, { validators: validarCoincidenciaPassword });
   }
 
   public cambiarPestana(pestana: 'login' | 'register' | 'recuperar'): void {
@@ -73,10 +95,18 @@ export class Login {
       return;
     }
     this.error = '';
-    this.login.registrar(this.formularioRegistro.value).subscribe({
+    const { nombre, apellido, direccion, email, password } = this.formularioRegistro.value;
+    this.login.registrar({ nombre, apellido, direccion, email, password }).subscribe({
       next: (u) => this.autenticado.emit(u.nombre),
       error: (e) => (this.error = e.error?.message ?? 'No se pudo conectar con el servidor.'),
     });
+  }
+
+  public tienePasswordDistinta(): boolean {
+    return (
+      this.formularioRegistro.hasError('passwordMismatch') &&
+      !!this.formularioRegistro.get('repetirPassword')?.touched
+    );
   }
 
   public cerrarModal(): void {
