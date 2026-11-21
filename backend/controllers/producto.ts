@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../config/db";
 import {
     crearProducto as crearProductoEnServicio,
+    darDeBajaProducto as darDeBajaProductoEnServicio,
     listarProductos as listarProductosEnServicio,
     obtenerProductoPorId as obtenerProductoPorIdEnServicio,
     ErrorValidacion,
@@ -100,4 +101,28 @@ export async function crearProducto(
 
         next(error);
     }
+}
+
+export async function darDeBajaProducto(
+      req: Request,
+      res: Response,
+      next: NextFunction,
+): Promise<void> {
+      try {
+          const id = Number(req.params.id);
+          if (!Number.isInteger(id) || id <= 0) {
+              res.status(400).json({ message: "ID inválido" });
+              return;
+          }
+
+          const dadoDeBaja = await darDeBajaProductoEnServicio(id);
+          if (!dadoDeBaja) {
+              res.status(404).json({ message: "Producto no encontrado o ya dado de baja" });
+              return;
+          }
+
+          res.status(204).send();
+      } catch (error) {
+          next(error);
+      }
 }

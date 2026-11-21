@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductoService } from '../../services/producto';
 import { Product } from '../../models/product';
 import { CarritoService } from '../../services/carrito';
@@ -13,11 +13,14 @@ import { LoginService } from '../../services/login';
 })
 export class Detalle implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private productoService = inject(ProductoService);
   private carritoService = inject(CarritoService);
   private loginService = inject(LoginService);
 
   protected readonly esAdmin = this.loginService.esAdmin;
+  protected readonly dandoDeBaja = signal(false);
+  protected readonly errorBaja = signal<string | null>(null);
   protected readonly feedback = signal<{ tipo: 'ok' | 'error'; texto: string } | null>(null);
   private feedbackTimer?: ReturnType<typeof setTimeout>;
 
@@ -70,6 +73,23 @@ export class Detalle implements OnInit, OnDestroy {
     }
 
     this.mostrarFeedback('ok', `Se agregó "${prod.nombre}" al carrito.`);
+  }
+
+  darDeBaja(): void {
+    const prod = this.producto();
+    if (!this.esAdmin() || !prod || this.dandoDeBaja()) return;
+
+    this.errorBaja.set(null);
+    this.dandoDeBaja.set(true);
+    this.productoService.darDeBaja(prod.id).subscribe({
+      next: () => {
+        void this.router.navigate(['/catalogo']);
+      },
+      error: () => {
+        this.dandoDeBaja.set(false);
+        this.errorBaja.set('No se pudo dar de baja el producto. Intentá nuevamente.');
+      },
+    });
   }
 
   private mostrarFeedback(tipo: 'ok' | 'error', texto: string): void {

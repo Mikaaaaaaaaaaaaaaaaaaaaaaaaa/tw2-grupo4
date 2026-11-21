@@ -102,14 +102,9 @@ export class ProductoService {
   }
 
   /**
-   * Busca un producto por ID: primero en memoria y si no está, le pregunta al backend
+   * Consulta el estado actual del producto en el backend antes de mostrarlo.
    */
   public obtenerPorId$(id: number): Observable<Product | undefined> {
-    const enMemoria = this.productos().find((p) => p.id === id);
-    if (enMemoria) {
-      return of(enMemoria);
-    }
-
     return this.http.get<ProductoApiDto>(`${this.apiUrl}/${id}`).pipe(
       map((item) => this.traducirDesdeApi(item)),
       catchError(() =>
@@ -119,6 +114,12 @@ export class ProductoService {
           catchError(() => of(undefined)),
         ),
       ),
+    );
+  }
+
+  public darDeBaja(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.productos.update((productos) => productos.filter((p) => p.id !== id))),
     );
   }
 

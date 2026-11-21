@@ -35,6 +35,7 @@ model products {
   image       String?       @db.NVarChar(500)
   stock       Int           @default(0, map: "DF__products__stock__5FB337D6")
   rating      Decimal?      @db.Decimal(2, 1)
+  status      String        @default("ACTIVE", map: "DF_products_status") @db.NVarChar(20)
   order_items order_items[]
 }
 

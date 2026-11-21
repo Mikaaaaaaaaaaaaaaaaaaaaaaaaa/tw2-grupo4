@@ -16,7 +16,7 @@ export type OrderRow = Awaited<ReturnType<typeof findOrdersByUser>>[number];
 export function createOrder(userId: number, items: ItemInput[]) {
   return prisma.$transaction(async (tx) => {
     const products = await tx.products.findMany({
-      where: { id: { in: items.map((i) => i.productId) } },
+      where: { id: { in: items.map((i) => i.productId) }, status: "ACTIVE" },
     });
     const byId = new Map(products.map((p) => [p.id, p]));
 
@@ -26,7 +26,7 @@ export function createOrder(userId: number, items: ItemInput[]) {
       if (!product) throw new HttpError(400, `El producto ${productId} no existe`);
 
       const { count } = await tx.products.updateMany({
-        where: { id: productId, stock: { gte: quantity } },
+        where: { id: productId, status: "ACTIVE", stock: { gte: quantity } },
         data: { stock: { decrement: quantity } },
       });
       if (count === 0) throw new HttpError(400, `Sin stock suficiente para "${product.title}"`);
