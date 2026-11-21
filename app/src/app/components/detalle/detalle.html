@@ -36,7 +36,19 @@
             }
           </div>
 
-          @if (!esAdmin()) {
+          @if (esAdmin()) {
+            <button
+              type="button"
+              (click)="darDeBaja()"
+              [disabled]="dandoDeBaja()"
+              class="w-full bg-red-600 hover:bg-red-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white font-bold text-sm rounded-xl py-3 shadow-lg shadow-red-500/20 transition-all"
+            >
+              {{ dandoDeBaja() ? 'Dando de baja...' : 'Dar de baja producto' }}
+            </button>
+            @if (errorBaja(); as mensaje) {
+              <p class="text-xs font-semibold text-center text-red-600" role="alert">{{ mensaje }}</p>
+            }
+          } @else {
             <button
               type="button"
               (click)="agregarAlCarrito()"

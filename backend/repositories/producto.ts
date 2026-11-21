@@ -17,6 +17,7 @@ export async function listar(filtros: FiltrosProductos) {
         : { id: "asc" as const };
 
   const productos = await prisma.products.findMany({
+    where: { status: "ACTIVE" },
     orderBy,
   });
 
@@ -52,6 +53,7 @@ export async function crear(producto: DatosProducto) {
       category: producto.category,
       price: producto.price,
       stock: producto.stock,
+      status: "ACTIVE",
       ...(producto.image !== undefined
         ? { image: producto.image }
         : {}),
@@ -60,7 +62,16 @@ export async function crear(producto: DatosProducto) {
 }
 
 export async function obtenerPorId(id: number) {
-  return prisma.products.findUnique({
-    where: { id },
+  return prisma.products.findFirst({
+    where: { id, status: "ACTIVE" },
   });
+}
+
+export async function darDeBaja(id: number) {
+  const { count } = await prisma.products.updateMany({
+    where: { id, status: "ACTIVE" },
+    data: { status: "DELETED" },
+  });
+
+  return count > 0;
 }

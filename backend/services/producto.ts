@@ -1,5 +1,6 @@
 import { 
   crear as crearProductoEnRepositorio,
+  darDeBaja as darDeBajaEnRepositorio,
   listar as listarProductosEnRepositorio,
   obtenerPorId as obtenerProductoPorIdEnRepositorio,
   type FiltrosProductos,
@@ -86,12 +87,12 @@ export async function listarProductos(filtros: FiltrosProductos) {
 
 export async function obtenerProductoPorId(id: number) {
   if (Number.isInteger(id) == false || id <= 0) {
-    return { error: "El ID es inválido."}
+    return { error: "ID_INVALIDO" } as const;
   }
 
   const producto = await obtenerProductoPorIdEnRepositorio(id);
   if (!producto) {
-    return { error: "Producto no encontrado." };
+    return { error: "PRODUCTO_NO_ENCONTRADO" } as const;
   }
 
   const rating = producto.rating !== null ? Number(producto.rating) : null;
@@ -101,4 +102,12 @@ export async function obtenerProductoPorId(id: number) {
     price: Number(producto.price),
     rating,
   };
+}
+
+export async function darDeBajaProducto(id: number): Promise<boolean> {
+  if (!Number.isInteger(id) || id <= 0) {
+    return false;
+  }
+
+  return darDeBajaEnRepositorio(id);
 }
