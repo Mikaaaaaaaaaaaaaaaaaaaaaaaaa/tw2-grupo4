@@ -12,8 +12,13 @@ export class LoginController {
     } catch (error: any) {
       if (error.message === "DatosInvalidos") {
         return res.status(400).json({
+          message: "Completá todos los campos obligatorios.",
+        });
+      }
+      if (error.message === "PasswordInvalida") {
+        return res.status(400).json({
           message:
-            "Completá todos los campos (clave de al menos 6 caracteres).",
+            "La contraseña debe tener al menos 8 caracteres, 2 números, una mayúscula y una minúscula.",
         });
       }
       if (error.message === "EmailExistente") {
